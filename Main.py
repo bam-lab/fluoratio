@@ -14,13 +14,24 @@
 #import numpy as np
 #import seaborn as sb
 import os
+import re
 
 
 # File selector
 exp_loc = input("Enter the full filepath to the experiment directory (Mark_and_Find_NNN): ")
 positions = os.listdir(exp_loc)
 n_pos = len(positions)
+position_regex = re.compile('Position.*')
 
 for pos in positions:
-    for frame in os.listdir(exp_loc + '/' + pos):
-        print(frame)
+    pos_filepath = exp_loc + '/' + pos
+    timepoint = os.listdir(pos_filepath)
+    for frame in timepoint:
+        if not position_regex.search(frame):
+            timepoint.remove(frame)
+            metadata = os.listdir(pos_filepath + '/' + frame)
+            # New function for file utilities to parse metadata xml file,
+            # generate gif from colour merge of channels. See file_util.py
+    print(metadata)
+    print(timepoint)
+    print(len(timepoint))
