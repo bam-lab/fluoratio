@@ -15,8 +15,8 @@ from skimage.filters.rank import mean
 from skimage import filters
 import numpy as np
 from scipy import ndimage as ndi
-import matplotlib.pyplot as plt
-plt.use("Agg")
+import matplotlib as mpl
+mpl.use("Agg")
 from copy import deepcopy
 
 
@@ -54,35 +54,35 @@ def mask_test(input_img_filepath):
     print("img_histeq low contrast: " + str(exposure.is_low_contrast(img_histeq)))
     print("img_otsu low contrast: " + str(exposure.is_low_contrast(img_otsu)))
 # Generate plot
-    fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 5, figsize=(9, 3),
+    fig, (ax1, ax2, ax3, ax4, ax5) = mpl.pyplot.subplots(1, 5, figsize=(9, 3),
                                                   sharex=True, sharey=True)
     # Display input image
-    ax1.imshow(img, cmap=plt.cm.gray)
+    ax1.imshow(img, cmap=mpl.pyplot.cm.gray)
     ax1.axis("off")
     ax1.set_title("orig", fontsize=12)
 
     # Display input image
-    ax2.imshow(img_smooth, cmap=plt.cm.gray)
+    ax2.imshow(img_smooth, cmap=mpl.pyplot.cm.gray)
     ax2.axis("off")
     ax2.set_title("img_smooth", fontsize=12)
 
     # Display histeq image
-    ax3.imshow(img_histeq, cmap=plt.cm.gray)
+    ax3.imshow(img_histeq, cmap=mpl.pyplot.cm.gray)
     ax3.axis("off")
     ax3.set_title("histeq", fontsize=12)
 
     # Display otsu image
-    ax4.imshow(img_otsu, cmap=plt.cm.gray)
+    ax4.imshow(img_otsu, cmap=mpl.pyplot.cm.gray)
     ax4.axis("off")
     ax4.set_title("otsu", fontsize=12)
     # Display mask
-    ax5.imshow(mask, cmap=plt.cm.gray)
+    ax5.imshow(mask, cmap=mpl.pyplot.cm.gray)
     ax5.axis("off")
     ax5.set_title("mask", fontsize=12)
 
     fig.tight_layout()
-    plt.savefig("Results/" + str(str(input_img_filepath.split("/")[-1]).split(".")[-2]) + "plot.png")
-    # plt.show()
+    mpl.pyplot.savefig("Results/" + str(str(input_img_filepath.split("/")[-1]).split(".")[-2]) + "plot.png")
+    # mpl.pyplot.show()
 
 
 for i in range(1, 13):
