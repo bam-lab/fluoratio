@@ -38,10 +38,12 @@ def background_subtract(input_img_filepath):
     # mask = ndi.binary_fill_holes(edges)
     # mask = morphology.binary_dilation(mask)
     # mask = ndi.binary_fill_holes(mask)
-    # mask = morphology.binary_closing(mask)
     # mask = morphology.binary_opening(mask)
     # mask = ndi.binary_fill_holes(mask)
     mask = ndi.binary_fill_holes(img_otsu)
+    mask = morphology.binary_dilation(mask)
+    mask = morphology.binary_closing(mask)
+    mask = ndi.binary_fill_holes(mask)
     return img, img_smooth, img_histeq, img_otsu, mask
 
 
@@ -78,12 +80,15 @@ def mask_test(input_img_filepath):
     ax5.set_title("mask", fontsize=12)
 
     fig.tight_layout()
-    plt.show()
+    plt.savefig("Results/" + str(str(input_img_filepath.split("/")[-1]).split(".")[-2]) + "plot.png")
+    # plt.show()
 
 
-for i in range(11, 13):
+for i in range(1, 13):
     position_num = str('{:03d}'.format(i))
-    test_filepath = "/Users/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch00.tif"
-    mask_test(test_filepath)
+    test_filepath_ch00 = "/home/jidicula/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch00.tif"
+    mask_test(test_filepath_ch00)
+    test_filepath_ch01 = "/home/jidicula/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch01.tif"
+    mask_test(test_filepath_ch01)
 # test_img_filepath = "/Users/johanan/prog/test/Mark_and_Find_001/Position002/Position002_t35_ch00.tif"
 # mask_test(test_img_filepath)
