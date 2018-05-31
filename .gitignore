@@ -102,3 +102,6 @@ ENV/
 *~
 .DS_Store
 fluoratio_env/
+results.csv
+outline.txt
+todo.txt
