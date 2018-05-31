@@ -50,6 +50,7 @@ def background_subtract(input_img_filepath):
 
 def mask_test(input_img_filepath):
     img, img_smooth, img_histeq, img_otsu, mask = background_subtract(input_img_filepath)
+    print(str(input_img_filepath.split("/")[-1]))
     print("img low contrast: " + str(exposure.is_low_contrast(img)))
     print("img_histeq low contrast: " + str(exposure.is_low_contrast(img_histeq)))
     print("img_otsu low contrast: " + str(exposure.is_low_contrast(img_otsu)))
