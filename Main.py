@@ -10,28 +10,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#import skimage as sk
-#import numpy as np
-#import seaborn as sb
-import os
+# import skimage as sk
+# import numpy as np
+# import seaborn as sb
 import re
+import glob
+import datetime
+import metadatautil as mu
 
 
 # File selector
-exp_loc = input("Enter the full filepath to the experiment directory (Mark_and_Find_NNN): ")
-positions = os.listdir(exp_loc)
+# exp_loc = input("Enter the full filepath to the experiment directory" +
+#                 " (Mark_and_Find_NNN): ")
+exp_loc = "/Users/johanan/prog/test/Mark_and_Find_001"
+# n_frames = int(input("Number of frames in a sequence: "))
+n_frames = 71
+positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
 n_pos = len(positions)
-position_regex = re.compile('Position.*')
+
+first_time = mu.get_time(positions[0] + "/Metadata/Position001_Properties.xml", 0)
+
+# print(timeshift)
+print("hello")
+
+with open("results.csv", "w") as f:
+    f.write("Position")
+    for i in range(n_frames):
+        f.write(",t" + str(i))
+        f.write(",r" + str(i))
+    f.write("\n")
 
 for pos in positions:
-    pos_filepath = exp_loc + '/' + pos
-    timepoint = os.listdir(pos_filepath)
-    for frame in timepoint:
-        if not position_regex.search(frame):
-            timepoint.remove(frame)
-            metadata = os.listdir(pos_filepath + '/' + frame)
-            # New function for file utilities to parse metadata xml file,
-            # generate gif from colour merge of channels. See file_util.py
-    print(metadata)
-    print(timepoint)
-    print(len(timepoint))
+    time_series = glob.glob(pos + '/' + '*.tif')  # list of full filepaths
+    metadata_dir = pos + '/MetaData/'
+    for idx, frame in enumerate(time_series):  # this counts each channel
+        timestamp = mu.get_time(metadata_dir +
+                                str(pos.split('/')[-1]) +
+                                '_Properties.xml',
+                                idx)
+        # print(str(timestamp) + " " + str(pos) + " " + str(frame))
+        if idx % 2 == 0:
+            elapsed_time = timestamp - first_time
+            if elapsed_time.days < 0:
+                elapsed_time = datetime.timedelta(0,
+                                                  elapsed_time.seconds,
+                                                  elapsed_time.microseconds)
+            # New function for file utilities to parse metadata xml
+            # file, generate gif from colour merge of channels.
+            assert type(elapsed_time) is datetime.timedelta, "elapsed_time is not a timedelta: %r" % elapsed_time
+
+            ch00_filepath = time_series[idx]
+            ch01_filepath = time_series[idx+1]
+            print(ch00_filepath + "\n" + ch01_filepath)
+    # print(time_series)
+#       print('frames:' + len(time_series))
+# print(positions)
