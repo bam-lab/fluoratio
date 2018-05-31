@@ -16,6 +16,7 @@ from skimage import filters
 import numpy as np
 from scipy import ndimage as ndi
 import matplotlib.pyplot as plt
+matplotlib.use("Agg")
 from copy import deepcopy
 
 
