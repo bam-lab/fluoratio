@@ -21,13 +21,15 @@ from copy import deepcopy
 
 
 # TODO actual background subtraction of input image
+# TODO join blobs
+# TODO don't segment blobs touching border of image
 def background_subtract(input_img_filepath):
     # Open image
     img = io.imread(input_img_filepath)
     # bilateral smoothing to preserve borders
     img_smooth = mean(img, morphology.disk(10))
     # Equalize histogram of input image
-    img_histeq = exposure.equalize_adapthist(img_smooth)
+    img_histeq = exposure.equalize_adapthist(img_smooth, kernel_size=100)
     # Highpass filter for image
     img_otsu = img_histeq >= filters.threshold_otsu(img_histeq)
     # generate mask
@@ -43,9 +45,18 @@ def background_subtract(input_img_filepath):
     # mask = ndi.binary_fill_holes(mask)
     mask = ndi.binary_fill_holes(img_otsu)
     mask = morphology.binary_dilation(mask)
-    mask = morphology.binary_closing(mask)
+    # mask = morphology.binary_closing(mask)
     mask = ndi.binary_fill_holes(mask)
-    return img, img_smooth, img_histeq, img_otsu, mask
+    mask = morphology.convex_hull_object(mask)
+    dilation = 12
+    for i in range(1, dilation):
+        mask = morphology.binary_dilation(mask)
+    # mask = morphology.binary_closing(mask)
+    # for i in range(1, dilation):
+    #     mask = morphology.binary_erosion(mask)
+    mask = ndi.binary_fill_holes(mask)
+    final_mask = morphology.binary_erosion(mask)
+    return img, img_smooth, img_histeq, img_otsu, final_mask
 
 
 def mask_test(input_img_filepath):
@@ -82,16 +93,18 @@ def mask_test(input_img_filepath):
     ax5.set_title("mask", fontsize=12)
 
     fig.tight_layout()
-    mpl.pyplot.savefig("Results/" + str(str(input_img_filepath.split("/")[-1]).split(".")[-2]) + "plot.png")
+    mpl.pyplot.savefig("Results/2/" + str(str(input_img_filepath.split("/")[-1]).split(".")[-2]) + "plot.png")
     mpl.pyplot.close()
     # mpl.pyplot.show()
 
 
 for i in range(1, 13):
     position_num = str('{:03d}'.format(i))
+ #   test_filepath_ch00 = "/Users/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch00.tif"
     test_filepath_ch00 = "/home/jidicula/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch00.tif"
     mask_test(test_filepath_ch00)
+#    test_filepath_ch01 = "/Users/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch01.tif"
     test_filepath_ch01 = "/home/jidicula/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch01.tif"
     mask_test(test_filepath_ch01)
-# test_img_filepath = "/Users/johanan/prog/test/Mark_and_Find_001/Position002/Position002_t35_ch00.tif"
+# test_img_filepath = "/Users/johanan/prog/test/Mark_and_Find_001/Position008/Position008_t35_ch00.tif"
 # mask_test(test_img_filepath)
