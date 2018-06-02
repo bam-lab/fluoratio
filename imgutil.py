@@ -47,7 +47,7 @@ def background_subtract(input_img_filepath):
     mask = morphology.binary_dilation(mask)
     # mask = morphology.binary_closing(mask)
     mask = ndi.binary_fill_holes(mask)
-    mask = morphology.convex_hull_object(mask)
+#    mask = morphology.convex_hull_object(mask)
     dilation = 12
     for i in range(1, dilation):
         mask = morphology.binary_dilation(mask)
