@@ -10,14 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import matplotlib as mpl
+mpl.use("Agg")
 from skimage import io, exposure, feature, morphology
 from skimage.filters.rank import mean
 from skimage import filters
 import numpy as np
 from scipy import ndimage as ndi
 from copy import deepcopy
-import matplotlib as mpl
-mpl.use("Agg")
 
 
 # TODO actual background subtraction of input image
