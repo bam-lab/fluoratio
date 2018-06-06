@@ -13,10 +13,11 @@
 # import skimage as sk
 # import numpy as np
 # import seaborn as sb
-import re
+# import re
 import glob
 import datetime
 import metadatautil as mu
+import imgutil as iu
 
 
 # File selector
@@ -36,8 +37,11 @@ print("hello")
 with open("results.csv", "w") as f:
     f.write("Position")
     for i in range(n_frames):
-        f.write(",t" + str(i))
-        f.write(",r" + str(i))
+        f.write(",t" + str(i))  # time
+        f.write(",r" + str(i))  # fluorescence ratio
+        f.write(",ar" + str(i))  # aspect ratio
+        f.write(",ca" + str(i))  # cell area
+        f.write(",na" + str(i))  # nucleus area
     f.write("\n")
 
 for pos in positions:
@@ -61,6 +65,8 @@ for pos in positions:
 
             ch00_filepath = time_series[idx]
             ch01_filepath = time_series[idx+1]
+            ch00_mask = iu.mask_gen(ch00_filepath)[-1]
+            ch01_mask = iu.mask_gen(ch01_filepath)[-1]
             print(ch00_filepath + "\n" + ch01_filepath)
     # print(time_series)
 #       print('frames:' + len(time_series))

@@ -10,7 +10,7 @@ print(fluo_ratio)
 y_label = "Nucleus to Cytoplasm Fluorescence Ratio, n.u."
 
 fluo_ratio_long = pd.wide_to_long(fluo_ratio,
-                                  stubnames=["t", "r"],
+                                  stubnames=["t", "r", "ar", "ca", "na"],
                                   i="Position",
                                   j="Frame",
                                   sep="",

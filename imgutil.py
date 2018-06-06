@@ -10,20 +10,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import matplotlib as mpl
-mpl.use("Agg")
 from skimage import io, exposure, feature, morphology
 from skimage.filters.rank import mean
 from skimage import filters
 import numpy as np
 from scipy import ndimage as ndi
 from copy import deepcopy
+import matplotlib as mpl
+mpl.use("Agg")
 
 
 # TODO actual background subtraction of input image
 # TODO join blobs
 # TODO don't segment blobs touching border of image
-def background_subtract(input_img_filepath):
+def mask_gen(input_img_filepath):
     # Open image
     img = io.imread(input_img_filepath)
     # bilateral smoothing to preserve borders
@@ -56,11 +56,15 @@ def background_subtract(input_img_filepath):
     #     mask = morphology.binary_erosion(mask)
     mask = ndi.binary_fill_holes(mask)
     final_mask = morphology.binary_erosion(mask)
-    return img, img_smooth, img_histeq, img_otsu, final_mask
+    return (img, img_smooth, img_histeq, img_otsu, final_mask)
+
+
+def mask_segmentation(nuc_mask, poi_channel):
+    return nucleus, cytoplasm
 
 
 def mask_test(input_img_filepath):
-    img, img_smooth, img_histeq, img_otsu, mask = background_subtract(input_img_filepath)
+    (img, img_smooth, img_histeq, img_otsu, mask) = mask_gen(input_img_filepath)
     print(str(input_img_filepath.split("/")[-1]))
     print("img low contrast: " + str(exposure.is_low_contrast(img)))
     print("img_histeq low contrast: " + str(exposure.is_low_contrast(img_histeq)))
