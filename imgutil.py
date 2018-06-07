@@ -12,7 +12,7 @@
 
 import matplotlib as mpl
 mpl.use("Agg")
-from skimage import io, exposure, feature, morphology
+from skimage import io, exposure, measure, morphology, segmentation
 from skimage.filters.rank import mean
 from skimage import filters
 import numpy as np
@@ -23,9 +23,9 @@ from copy import deepcopy
 # TODO actual background subtraction of input image
 # TODO join blobs
 # TODO don't segment blobs touching border of image
-def mask_gen(input_img_filepath):
+def mask_gen(img_filepath):
     # Open image
-    img = io.imread(input_img_filepath)
+    img = io.imread(img_filepath)
     # bilateral smoothing to preserve borders
     img_smooth = mean(img, morphology.disk(10))
     # Equalize histogram of input image
@@ -43,35 +43,67 @@ def mask_gen(input_img_filepath):
     # mask = ndi.binary_fill_holes(mask)
     # mask = morphology.binary_opening(mask)
     # mask = ndi.binary_fill_holes(mask)
-    mask = ndi.binary_fill_holes(img_otsu)
-    mask = morphology.binary_dilation(mask)
-    # mask = morphology.binary_closing(mask)
-    mask = ndi.binary_fill_holes(mask)
+    final_mask = ndi.binary_fill_holes(img_otsu)
+    cleared_mask = segmentation.clear_border(final_mask)
+    # mask = morphology.binary_dilation(mask)
+    # # mask = morphology.binary_closing(mask)
+    # mask = ndi.binary_fill_holes(mask)
 #    mask = morphology.convex_hull_object(mask)
-    dilation = 12
-    for i in range(1, dilation):
-        mask = morphology.binary_dilation(mask)
+    # dilation = 12
+    # for i in range(1, dilation):
+    #     mask = morphology.binary_dilation(mask)
     # mask = morphology.binary_closing(mask)
     # for i in range(1, dilation):
     #     mask = morphology.binary_erosion(mask)
-    mask = ndi.binary_fill_holes(mask)
-    final_mask = morphology.binary_erosion(mask)
-    return (img, img_smooth, img_histeq, img_otsu, final_mask)
+    # mask = ndi.binary_fill_holes(mask)
+    return (img, img_smooth, img_otsu, final_mask, cleared_mask)
 
 
-def mask_segmentation(nuc_mask, poi_channel):
-    return nucleus, cytoplasm
+def mask_segmenter(mask, img_filepath):
+    assert type(mask[0, 0]) is np.bool_, "input mask is not binary: %r" % mask
+    img = io.open(img_filepath)
+    masked_img = deepcopy(img)
+    masked_img[mask] = 0        # zeros the pixels where mask is True
+    masked_segment = deepcopy(img)
+    masked_segment[~mask] = 0   # zeros pixels where mask is False
+    return masked_img, masked_segment
 
 
-def mask_test(input_img_filepath):
-    (img, img_smooth, img_histeq, img_otsu, mask) = mask_gen(input_img_filepath)
-    print(str(input_img_filepath.split("/")[-1]))
+def img_labeler(mask):
+    label_img = measure.label(mask)
+    return label_img
+
+
+def area_measure(label_img):
+    mask_area = []
+    for region in measure.regionprops(label_img):
+        mask_area.append(region.area)
+    return mask_area
+
+
+def aspect_ratio(label_img):
+    aspect_ratio = []
+    for region in measure.regionprops(label_img):
+        major_axis = float(region.major_axis_length)
+        minor_axis = float(region.minor_axis_length)
+        aspect_ratio = major_axis/minor_axis
+        aspect_ratio.append(aspect_ratio)
+    return aspect_ratio
+
+
+def mask_test(img_filepath):
+    (img, img_smooth, img_otsu, mask, cleared_mask) = mask_gen(img_filepath)
+    print(str(img_filepath.split("/")[-1]))
     print("img low contrast: " + str(exposure.is_low_contrast(img)))
-    print("img_histeq low contrast: " + str(exposure.is_low_contrast(img_histeq)))
+    print("img_histeq low contrast: " +
+          str(exposure.is_low_contrast(img_otsu)))
     print("img_otsu low contrast: " + str(exposure.is_low_contrast(img_otsu)))
-# Generate plot
-    fig, (ax1, ax2, ax3, ax4, ax5) = mpl.pyplot.subplots(1, 5, figsize=(9, 3),
-                                                  sharex=True, sharey=True)
+    # Generate plot
+    fig, (ax1, ax2, ax3, ax4, ax5) = mpl.pyplot.subplots(1,
+                                                         5,
+                                                         figsize=(9, 3),
+                                                         sharex=True,
+                                                         sharey=True)
     # Display input image
     ax1.imshow(img, cmap=mpl.pyplot.cm.gray)
     ax1.axis("off")
@@ -80,35 +112,45 @@ def mask_test(input_img_filepath):
     # Display input image
     ax2.imshow(img_smooth, cmap=mpl.pyplot.cm.gray)
     ax2.axis("off")
-    ax2.set_title("img_smooth", fontsize=12)
+    ax2.set_title("histeq", fontsize=12)
 
     # Display histeq image
-    ax3.imshow(img_histeq, cmap=mpl.pyplot.cm.gray)
+    ax3.imshow(img_otsu, cmap=mpl.pyplot.cm.gray)
     ax3.axis("off")
-    ax3.set_title("histeq", fontsize=12)
+    ax3.set_title("otsu", fontsize=12)
 
     # Display otsu image
-    ax4.imshow(img_otsu, cmap=mpl.pyplot.cm.gray)
+    ax4.imshow(mask, cmap=mpl.pyplot.cm.gray)
     ax4.axis("off")
-    ax4.set_title("otsu", fontsize=12)
+    ax4.set_title("mask", fontsize=12)
     # Display mask
-    ax5.imshow(mask, cmap=mpl.pyplot.cm.gray)
+    ax5.imshow(cleared_mask, cmap=mpl.pyplot.cm.gray)
     ax5.axis("off")
-    ax5.set_title("mask", fontsize=12)
+    ax5.set_title("cleared", fontsize=12)
 
     fig.tight_layout()
-    mpl.pyplot.savefig("Results/2/" + str(str(input_img_filepath.split("/")[-1]).split(".")[-2]) + "plot.png")
+    filename = str(str(img_filepath.split("/")[-1]).split(".")[-2])
+    mpl.pyplot.savefig("Results/2/" + filename + "plot.png")
     mpl.pyplot.close()
     # mpl.pyplot.show()
 
 
 for i in range(1, 13):
     position_num = str('{:03d}'.format(i))
- #   test_filepath_ch00 = "/Users/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch00.tif"
-    test_filepath_ch00 = "/home/jidicula/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch00.tif"
+    # test_filepath_ch00 = ("/Users/johanan/prog/test/"
+    #                       "Mark_and_Find_001/Position" + position_num +
+    #                       "/Position" + position_num + "_t35_ch00.tif")
+    test_filepath_ch00 = ("/home/jidicula/johanan/prog/test/"
+                          "Mark_and_Find_001/Position" + position_num +
+                          "/Position" + position_num + "_t35_ch00.tif")
     mask_test(test_filepath_ch00)
-#    test_filepath_ch01 = "/Users/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch01.tif"
-    test_filepath_ch01 = "/home/jidicula/johanan/prog/test/Mark_and_Find_001/Position" + position_num + "/Position" + position_num + "_t35_ch01.tif"
+    # test_filepath_ch01 = ("/Users/johanan/prog/test/"
+    #                       "Mark_and_Find_001/Position" + position_num +
+    #                       "/Position" + position_num + "_t35_ch01.tif")
+    test_filepath_ch01 = ("/home/jidicula/johanan/prog/test/"
+                          "Mark_and_Find_001/Position" + position_num +
+                          "/Position" + position_num + "_t35_ch01.tif")
     mask_test(test_filepath_ch01)
-# test_img_filepath = "/Users/johanan/prog/test/Mark_and_Find_001/Position008/Position008_t35_ch00.tif"
+# test_img_filepath = ("/Users/johanan/prog/test/Mark_and_Find_001/"
+#                      "Position008/Position008_t35_ch00.tif")
 # mask_test(test_img_filepath)

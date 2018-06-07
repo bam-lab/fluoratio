@@ -25,11 +25,14 @@ import imgutil as iu
 #                 " (Mark_and_Find_NNN): ")
 exp_loc = "/Users/johanan/prog/test/Mark_and_Find_001"
 # n_frames = int(input("Number of frames in a sequence: "))
+# nuc_channel = input("Which channel has the NLS protein? ch00 or ch01 ")
+nuc_channel = "ch01"
 n_frames = 71
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
 n_pos = len(positions)
 
-first_time = mu.get_time(positions[0] + "/Metadata/Position001_Properties.xml", 0)
+first_time = mu.get_time(positions[0] +
+                         "/Metadata/Position001_Properties.xml", 0)
 
 # print(timeshift)
 print("hello")
@@ -61,13 +64,24 @@ for pos in positions:
                                                   elapsed_time.microseconds)
             # New function for file utilities to parse metadata xml
             # file, generate gif from colour merge of channels.
-            assert type(elapsed_time) is datetime.timedelta, "elapsed_time is not a timedelta: %r" % elapsed_time
-
-            ch00_filepath = time_series[idx]
-            ch01_filepath = time_series[idx+1]
-            ch00_mask = iu.mask_gen(ch00_filepath)[-1]
-            ch01_mask = iu.mask_gen(ch01_filepath)[-1]
-            print(ch00_filepath + "\n" + ch01_filepath)
+            assert_warning = ("elapsed_time is not a timedelta: "
+                              "%r" % elapsed_time)
+            assert type(elapsed_time) is datetime.timedelta, assert_warning
+            if nuc_channel == "ch01":
+                poi_filepath = time_series[idx]
+                nuc_filepath = time_series[idx+1]
+            else:
+                poi_filepath = time_series[idx+1]
+                nuc_filepath = time_series[idx]
+            poi_mask = iu.mask_gen(poi_filepath)[-1]  # area and aspect ratio
+            nuc_mask = iu.mask_gen(nuc_filepath)[-1]  # area and segmentation
+            cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
+            fluo_ratio = float(nucleus.sum())/float(cytoplasm.sum())
+            poi_label = iu.img_labeler(poi_mask)
+            poi_area = iu.area_measure(poi_label)
+            poi_aspect_ratio = iu.aspect_ratio(poi_label)
+            nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
+            print(poi_filepath + "\n" + nuc_filepath)
     # print(time_series)
 #       print('frames:' + len(time_series))
 # print(positions)
