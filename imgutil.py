@@ -145,22 +145,23 @@ def distance(x1, y1, x2, y2):
     return ((x2 - x1)**2 + (y2 - y1)**2)**0.5
 
 
-for i in range(1, 13):
-    position_num = str('{:03d}'.format(i))
-    # test_filepath_ch00 = ("/Users/johanan/prog/test/"
-    #                       "Mark_and_Find_001/Position" + position_num +
-    #                       "/Position" + position_num + "_t35_ch00.tif")
-    test_filepath_ch00 = ("/home/jidicula/johanan/prog/test/"
-                          "Mark_and_Find_001/Position" + position_num +
-                          "/Position" + position_num + "_t35_ch00.tif")
-    mask_test(test_filepath_ch00)
-    # test_filepath_ch01 = ("/Users/johanan/prog/test/"
-    #                       "Mark_and_Find_001/Position" + position_num +
-    #                       "/Position" + position_num + "_t35_ch01.tif")
-    test_filepath_ch01 = ("/home/jidicula/johanan/prog/test/"
-                          "Mark_and_Find_001/Position" + position_num +
-                          "/Position" + position_num + "_t35_ch01.tif")
-    mask_test(test_filepath_ch01)
-# test_img_filepath = ("/Users/johanan/prog/test/Mark_and_Find_001/"
-#                      "Position008/Position008_t35_ch00.tif")
-# mask_test(test_img_filepath)
+def test():
+    for i in range(1, 13):
+        position_num = str('{:03d}'.format(i))
+        # test_filepath_ch00 = ("/Users/johanan/prog/test/"
+        #                       "Mark_and_Find_001/Position" + position_num +
+        #                       "/Position" + position_num + "_t35_ch00.tif")
+        test_filepath_ch00 = ("/home/jidicula/johanan/prog/test/"
+                              "Mark_and_Find_001/Position" + position_num +
+                              "/Position" + position_num + "_t35_ch00.tif")
+        mask_test(test_filepath_ch00)
+        # test_filepath_ch01 = ("/Users/johanan/prog/test/"
+        #                       "Mark_and_Find_001/Position" + position_num +
+        #                       "/Position" + position_num + "_t35_ch01.tif")
+        test_filepath_ch01 = ("/home/jidicula/johanan/prog/test/"
+                              "Mark_and_Find_001/Position" + position_num +
+                              "/Position" + position_num + "_t35_ch01.tif")
+        mask_test(test_filepath_ch01)
+        # test_img_filepath = ("/Users/johanan/prog/test/Mark_and_Find_001/"
+        #                      "Position008/Position008_t35_ch00.tif")
+        # mask_test(test_img_filepath)
