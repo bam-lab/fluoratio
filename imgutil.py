@@ -12,17 +12,15 @@
 
 import matplotlib as mpl
 mpl.use("Agg")
-from skimage import io, exposure, measure, morphology, segmentation
-from skimage.filters.rank import mean
-from skimage import filters
-import numpy as np
-from scipy import ndimage as ndi
 from copy import deepcopy
 
+import numpy as np
+from scipy import ndimage as ndi
+from skimage import exposure, filters, io, measure, morphology, segmentation
+from skimage.filters.rank import mean
 
-# TODO actual background subtraction of input image
-# TODO join blobs
-# TODO don't segment blobs touching border of image
+
+# TODO: pick blob closest to bottom right corner for analysis
 def mask_gen(img_filepath):
     # Open image
     img = io.imread(img_filepath)
@@ -44,6 +42,7 @@ def mask_gen(img_filepath):
     # mask = morphology.binary_opening(mask)
     # mask = ndi.binary_fill_holes(mask)
     final_mask = ndi.binary_fill_holes(img_otsu)
+    # remove blobs touching border
     cleared_mask = segmentation.clear_border(final_mask)
     # mask = morphology.binary_dilation(mask)
     # # mask = morphology.binary_closing(mask)
@@ -74,6 +73,13 @@ def img_labeler(mask):
     return label_img
 
 
+def centroids(label_img):
+    centroids = []
+    for region in measure.regionprops(label_img):
+        centroids.append(region.centroid)
+    return centroids
+
+
 def area_measure(label_img):
     mask_area = []
     for region in measure.regionprops(label_img):
@@ -86,7 +92,7 @@ def aspect_ratio(label_img):
     for region in measure.regionprops(label_img):
         major_axis = float(region.major_axis_length)
         minor_axis = float(region.minor_axis_length)
-        aspect_ratio = major_axis/minor_axis
+        aspect_ratio = major_axis / minor_axis
         aspect_ratio.append(aspect_ratio)
     return aspect_ratio
 
@@ -131,8 +137,12 @@ def mask_test(img_filepath):
     fig.tight_layout()
     filename = str(str(img_filepath.split("/")[-1]).split(".")[-2])
     mpl.pyplot.savefig("Results/2/" + filename + "plot.png")
-    mpl.pyplot.close()
+    mpl.pyplot.close(fig)
     # mpl.pyplot.show()
+
+
+def distance(x1, y1, x2, y2):
+    return ((x2 - x1)**2 + (y2 - y1)**2)**0.5
 
 
 for i in range(1, 13):
