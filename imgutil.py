@@ -67,7 +67,7 @@ def mask_gen(img_filepath):
 
 def mask_segmenter(mask, img_filepath):
     assert type(mask[0, 0]) is np.bool_, "input mask is not binary: %r" % mask
-    img = io.open(img_filepath)
+    img = io.imread(img_filepath)
     masked_img = deepcopy(img)
     masked_img[mask] = 0        # zeros the pixels where mask is True
     masked_segment = deepcopy(img)
