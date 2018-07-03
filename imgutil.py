@@ -47,16 +47,19 @@ def mask_gen(img_filepath):
     label_mask = img_labeler(cleared_mask)
     mask_centroids = centroids(label_mask)
     # TODO: test blob removal
+    distance = []
+    for centroid in mask_centroids:
+        distance.append(distance(*centroid, len(img)-1, len(img)-1))
     # Minimum distance centroid from bottom right
-    max_idx = mask_centroids.index(max(mask_centroids))
-    print("max centroid index: " + str(max_idx))
+    max_idx = mask_centroids.index(max(distance))
+    print("max centroid index: " + str(distance))
     # remove labeled regions in for loop?
     for idx, region in enumerate(measure.regionprops(label_mask)):
         if idx != max_idx:
             for region_coord in region.coords:
                 x = region_coord[0]
                 y = region_coord[1]
-                cleared_mask[x, y] = 0
+                cleared_mask[y, x] = 0
     return (img, img_smooth, img_otsu, final_mask, cleared_mask)
 
 
