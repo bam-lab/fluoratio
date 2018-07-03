@@ -139,7 +139,7 @@ def mask_test(img_filepath):
     fig.tight_layout()
     filename = str(str(img_filepath.split("/")[-1]).split(".")[-2])
     mpl.pyplot.savefig("Results/2/" + filename + "plot.png")
-    mpl.pyplot.close(fig)
+    mpl.pyplot.close('all')
     # mpl.pyplot.show()
 
 
