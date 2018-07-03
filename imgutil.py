@@ -27,7 +27,7 @@ def mask_gen(img_filepath):
     # bilateral smoothing to preserve borders
     img_smooth = mean(img, morphology.disk(10))
     # Equalize histogram of input image
-    img_histeq = exposure.equalize_adapthist(img_smooth, kernel_size=100)
+    img_histeq = exposure.equalize_adapthist(img_smooth)
     # Highpass filter for image
     img_otsu = img_histeq >= filters.threshold_otsu(img_histeq)
     # generate mask
@@ -44,17 +44,19 @@ def mask_gen(img_filepath):
     final_mask = ndi.binary_fill_holes(img_otsu)
     # remove blobs touching border
     cleared_mask = segmentation.clear_border(final_mask)
-    # mask = morphology.binary_dilation(mask)
-    # # mask = morphology.binary_closing(mask)
-    # mask = ndi.binary_fill_holes(mask)
-#    mask = morphology.convex_hull_object(mask)
-    # dilation = 12
-    # for i in range(1, dilation):
-    #     mask = morphology.binary_dilation(mask)
-    # mask = morphology.binary_closing(mask)
-    # for i in range(1, dilation):
-    #     mask = morphology.binary_erosion(mask)
-    # mask = ndi.binary_fill_holes(mask)
+    label_mask = img_labeler(cleared_mask)
+    mask_centroids = centroids(label_mask)
+    # TODO: test blob removal
+    # Minimum distance centroid from bottom right
+    max_idx = mask_centroids.index(max(mask_centroids))
+    print("max centroid index: " + str(max_idx))
+    # remove labeled regions in for loop?
+    for idx, region in enumerate(measure.regionprops(label_mask)):
+        if idx != max_idx:
+            for region_coord in region.coords:
+                x = region_coord[0]
+                y = region_coord[1]
+                cleared_mask[x, y] = 0
     return (img, img_smooth, img_otsu, final_mask, cleared_mask)
 
 
@@ -70,14 +72,14 @@ def mask_segmenter(mask, img_filepath):
 
 def img_labeler(mask):
     label_img = measure.label(mask)
-    return label_img
+    return label_img            # Labeled array with an int for each blob
 
 
 def centroids(label_img):
     centroids = []
     for region in measure.regionprops(label_img):
         centroids.append(region.centroid)
-    return centroids
+    return centroids            # list of (row, col) tuples
 
 
 def area_measure(label_img):
@@ -141,7 +143,7 @@ def mask_test(img_filepath):
     # mpl.pyplot.show()
 
 
-def distance(x1, y1, x2, y2):
+def distance(y1, x1, y2, x2):
     return ((x2 - x1)**2 + (y2 - y1)**2)**0.5
 
 
