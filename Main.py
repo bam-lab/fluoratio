@@ -30,8 +30,8 @@ print(positions[0])
 first_time = mu.get_time(positions[0] + "/MetaData/Position001_Properties.xml",
                          0)
 # print(timeshift)
-print("hello")
-with open("results.csv", "w") as f:
+print("hello there")
+with open("Results/results.csv", "w") as f:
     f.write("Position")
     for i in range(n_frames):
         f.write(",t" + str(i))  # time

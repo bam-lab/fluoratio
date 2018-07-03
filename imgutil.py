@@ -90,17 +90,15 @@ def centroids(label_img):
 def area_measure(label_img):
     mask_area = []
     for region in measure.regionprops(label_img):
-        mask_area.append(region.area)
+        mask_area = region.area
     return mask_area
 
 
 def aspect_ratio(label_img):
-    aspect_ratio = []
     for region in measure.regionprops(label_img):
         major_axis = float(region.major_axis_length)
         minor_axis = float(region.minor_axis_length)
         aspect_ratio = major_axis / minor_axis
-        aspect_ratio.append(aspect_ratio)
     return aspect_ratio
 
 
