@@ -27,7 +27,7 @@ positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
 positions.sort()
 n_pos = len(positions)
 print(positions[0])
-first_time = mu.get_time(positions[0] + "/Metadata/Position001_Properties.xml",
+first_time = mu.get_time(positions[0] + "/MetaData/Position001_Properties.xml",
                          0)
 # print(timeshift)
 print("hello")
