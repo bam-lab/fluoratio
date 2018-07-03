@@ -43,6 +43,7 @@ with open("Results/results.csv", "w") as f:
     # Iterates through positions in mark & find experiment
     for index, pos in enumerate(positions):
         time_series = glob.glob(pos + '/' + '*.tif')  # list of full filepaths
+        time_series.sort()
         metadata_dir = pos + '/MetaData/'
         f.write(str(i + 1) + ',')
         # iterate through time series for position
