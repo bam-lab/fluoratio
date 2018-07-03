@@ -24,6 +24,7 @@ exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_001"
 nuc_channel = "ch01"
 n_frames = 71
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
+positions.sort()
 n_pos = len(positions)
 print(positions[0])
 first_time = mu.get_time(positions[0] + "/Metadata/Position001_Properties.xml",
