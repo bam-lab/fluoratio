@@ -11,7 +11,7 @@
 # limitations under the License.
 
 import matplotlib as mpl
-mpl.use("Agg")
+mpl.use("GtkAgg")
 from copy import deepcopy
 
 import numpy as np
