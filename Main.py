@@ -45,7 +45,7 @@ with open("Results/results.csv", "w") as f:
         time_series = glob.glob(pos + '/' + '*.tif')  # list of full filepaths
         time_series.sort()
         metadata_dir = pos + '/MetaData/'
-        f.write(str(i + 1) + ',')
+        f.write(str(index + 1) + ',')
         # iterate through time series for position
         for idx, frame in enumerate(time_series):  # this counts each channel
             timestamp = mu.get_time(
