@@ -11,7 +11,9 @@
 # limitations under the License.
 
 import matplotlib as mpl
-#mpl.use("GtkAgg")
+#mpl.use("Agg")
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 from copy import deepcopy
 
 import numpy as np
@@ -47,19 +49,19 @@ def mask_gen(img_filepath):
     label_mask = img_labeler(cleared_mask)
     mask_centroids = centroids(label_mask)
     # TODO: test blob removal
-    distance = []
+    distances = []
     for centroid in mask_centroids:
-        distance.append(distance(*centroid, len(img)-1, len(img)-1))
+        distances.append(ruler(*centroid, len(img)-1, len(img)-1))
     # Minimum distance centroid from bottom right
-    max_idx = mask_centroids.index(max(distance))
-    print("max centroid index: " + str(distance))
+    min_idx = distances.index(min(distances))
+    print("southeast-most centroid index: " + str(min_idx))
     # remove labeled regions in for loop?
     for idx, region in enumerate(measure.regionprops(label_mask)):
-        if idx != max_idx:
+        if idx != min_idx:
             for region_coord in region.coords:
                 x = region_coord[0]
                 y = region_coord[1]
-                cleared_mask[y, x] = 0
+                cleared_mask[x, y] = 0
     return (img, img_smooth, img_otsu, final_mask, cleared_mask)
 
 
@@ -139,14 +141,13 @@ def mask_test(img_filepath):
     ax5.axis("off")
     ax5.set_title("cleared", fontsize=12)
 
-    fig.tight_layout()
     filename = str(str(img_filepath.split("/")[-1]).split(".")[-2])
-    mpl.pyplot.savefig("Results/2/" + filename + "plot.png")
+    fig.savefig("Results/" + filename + "plot.png")
     mpl.pyplot.close('all')
     # mpl.pyplot.show()
 
 
-def distance(y1, x1, y2, x2):
+def ruler(y1, x1, y2, x2):
     return ((x2 - x1)**2 + (y2 - y1)**2)**0.5
 
 
