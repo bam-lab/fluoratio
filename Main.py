@@ -8,7 +8,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import datetime
+import datetime as dt
 import glob
 
 import imgutil as iu
@@ -18,7 +18,7 @@ import metadatautil as mu
 # File selector
 # exp_loc = input("Enter the full filepath to the experiment directory" +
 #                 " (Mark_and_Find_NNN): ")
-exp_loc = "/Users/johanan/prog/test/Mark_and_Find_001"
+exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_001"
 # n_frames = int(input("Number of frames in a sequence: "))
 # nuc_channel = input("Which channel has the NLS protein? ch00 or ch01 ")
 nuc_channel = "ch01"
@@ -38,10 +38,12 @@ with open("results.csv", "w") as f:
         f.write(",ca" + str(i))  # cell area
         f.write(",na" + str(i))  # nucleus area
     f.write("\n")
+    # Iterates through positions in mark & find experiment
     for index, pos in enumerate(positions):
         time_series = glob.glob(pos + '/' + '*.tif')  # list of full filepaths
         metadata_dir = pos + '/MetaData/'
         f.write(str(i + 1) + ',')
+        # iterate through time series for position
         for idx, frame in enumerate(time_series):  # this counts each channel
             timestamp = mu.get_time(
                 metadata_dir +
@@ -50,19 +52,21 @@ with open("results.csv", "w") as f:
             if idx % 2 == 0:
                 elapsed_time = timestamp - first_time
                 if elapsed_time.days < 0:
-                    elapsed_time = datetime.timedelta(0, elapsed_time.seconds,
-                                                      elapsed_time.microseconds)
+                    elapsed_time = dt.timedelta(0, elapsed_time.seconds,
+                                                elapsed_time.microseconds)
                 assert_warning = ("elapsed_time is not a timedelta: "
                                   "%r" % elapsed_time)
-                assert type(elapsed_time) is datetime.timedelta, assert_warning
+                assert type(elapsed_time) is dt.timedelta, assert_warning
                 if nuc_channel == "ch01":
                     poi_filepath = time_series[idx]
                     nuc_filepath = time_series[idx + 1]
                 else:
                     poi_filepath = time_series[idx + 1]
                     nuc_filepath = time_series[idx]
-                poi_mask = iu.mask_gen(poi_filepath)[-1]  # area and aspect ratio
-                nuc_mask = iu.mask_gen(nuc_filepath)[-1]  # area and segmentation
+                # area and aspect ratio
+                poi_mask = iu.mask_gen(poi_filepath)[-1]
+                # area and segmentation
+                nuc_mask = iu.mask_gen(nuc_filepath)[-1]
                 cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
                 fluo_ratio = float(nucleus.sum()) / float(cytoplasm.sum())
                 poi_label = iu.img_labeler(poi_mask)
