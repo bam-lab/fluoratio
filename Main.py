@@ -77,9 +77,9 @@ with open("Results/results.csv", "w") as f:
                 except ZeroDivisionError:
                     fluo_ratio = 0
                 poi_label = iu.img_labeler(poi_mask), 3
-                poi_area = round(iu.area_measure(poi_label), 3)
+                poi_area = iu.area_measure(poi_label)
                 poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
-                nuc_area = round(iu.area_measure(iu.img_labeler(nuc_mask)), 3)
+                nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
                 minutes = round(elapsed_time.seconds/60.0, 3)
                 print(poi_filepath + "\n" + nuc_filepath)
                 f.write(str(elapsed_time.seconds/60.0) + ',')

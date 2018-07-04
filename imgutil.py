@@ -88,7 +88,6 @@ def centroids(label_img):
 
 
 def area_measure(label_img):
-    mask_area = []
     for region in measure.regionprops(label_img):
         mask_area = region.area
     return mask_area
