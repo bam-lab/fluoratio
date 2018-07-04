@@ -76,7 +76,7 @@ with open("Results/results.csv", "w") as f:
                                        float(cytoplasm.sum()), 3)
                 except ZeroDivisionError:
                     fluo_ratio = 0
-                poi_label = iu.img_labeler(poi_mask), 3
+                poi_label = iu.img_labeler(poi_mask)
                 poi_area = iu.area_measure(poi_label)
                 poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
                 nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
