@@ -98,12 +98,10 @@ def aspect_ratio(label_img):
     for region in measure.regionprops(label_img):
         major_axis = float(region.major_axis_length)
         minor_axis = float(region.minor_axis_length)
-        while True:
-            try:
-                aspect_ratio = major_axis / minor_axis
-                break
-            except ZeroDivisionError:
-                aspect_ratio = 0
+        try:
+            aspect_ratio = major_axis / minor_axis
+        except ZeroDivisionError:
+            aspect_ratio = 0
     return aspect_ratio
 
 

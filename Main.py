@@ -71,13 +71,11 @@ with open("Results/results.csv", "w") as f:
                 # area and segmentation
                 nuc_mask = iu.mask_gen(nuc_filepath)[-1]
                 cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
-                while True:
-                    try:
-                        fluo_ratio = round(float(nucleus.sum()) /
-                                           float(cytoplasm.sum()), 3)
-                        break
-                    except ZeroDivisionError:
-                        fluo_ratio = 0
+                try:
+                    fluo_ratio = round(float(nucleus.sum()) /
+                                       float(cytoplasm.sum()), 3)
+                except ZeroDivisionError:
+                    fluo_ratio = 0
                 poi_label = iu.img_labeler(poi_mask), 3
                 poi_area = round(iu.area_measure(poi_label), 3)
                 poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
