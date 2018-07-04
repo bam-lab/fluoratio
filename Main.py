@@ -73,15 +73,16 @@ with open("Results/results.csv", "w") as f:
                 cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
                 while True:
                     try:
-                        fluo_ratio = float(nucleus.sum()) / \
-                                           float(cytoplasm.sum())
+                        fluo_ratio = round(float(nucleus.sum()) /
+                                           float(cytoplasm.sum()), 3)
                         break
                     except ZeroDivisionError:
                         fluo_ratio = 0
-                poi_label = iu.img_labeler(poi_mask)
-                poi_area = iu.area_measure(poi_label)
-                poi_aspect_ratio = iu.aspect_ratio(poi_label)
-                nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
+                poi_label = iu.img_labeler(poi_mask), 3
+                poi_area = round(iu.area_measure(poi_label), 3)
+                poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
+                nuc_area = round(iu.area_measure(iu.img_labeler(nuc_mask)), 3)
+                minutes = round(elapsed_time.seconds/60.0, 3)
                 print(poi_filepath + "\n" + nuc_filepath)
                 f.write(str(elapsed_time.seconds/60.0) + ',')
                 f.write(str(fluo_ratio) + ',')
