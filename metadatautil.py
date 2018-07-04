@@ -19,7 +19,6 @@
 
 import xml.etree.ElementTree as ET
 from datetime import datetime
-import re
 
 
 # Get first absolute time for a position.
