@@ -6,7 +6,7 @@ This software is intended to analyze the nucleus to cytoplasm fluorescence ratio
 
 ## Setup
 
-This software must be run with Python 3, which can be obtained at https://www.python.org/downloads/ . Test that you have installed it correctly by running `python --version` in your terminal, which should return a version number 3.x.x.
+This software must be run with Python 3.5.x or 3.6.x, which can be obtained at https://www.python.org/downloads/ . Test that you have installed it correctly by running `python --version` in your terminal, which should return a version number 3.x.x.
 
 After you have installed Python 3, you must install the dependencies for fluoratio. Run `pip install --user -r req.txt` to install the dependencies listed in that file. Note that this command will only install the dependencies for that user account - to install them for all users, omit the `--user` flag.
 
