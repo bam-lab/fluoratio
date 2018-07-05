@@ -18,7 +18,7 @@ import metadatautil as mu
 # File selector
 # exp_loc = input("Enter the full filepath to the experiment directory" +
 #                 " (Mark_and_Find_NNN): ")
-exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_001"
+exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_002"
 # n_frames = int(input("Number of frames in a sequence: "))
 # nuc_channel = input("Which channel has the NLS protein? ch00 or ch01 ")
 nuc_channel = "ch01"
@@ -27,7 +27,7 @@ positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
 positions.sort()
 n_pos = len(positions)
 print(positions[0])
-first_time = mu.get_time(positions[0] + "/MetaData/Position001_Properties.xml",
+first_time = mu.get_time(positions[0] + glob.glob("MetaData/*_Properties.xml"),
                          0)
 # print(timeshift)
 print("hello there")
