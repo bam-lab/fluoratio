@@ -66,6 +66,7 @@ def mask_gen(img_filepath):
                     print("y: " + str(y))
                     cleared_mask[x, y] = 0
     except ValueError:
+        print("ValueError")
         img = [[]]
         img_smooth = [[]]
         img_otsu = [[]]
