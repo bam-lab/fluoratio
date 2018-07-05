@@ -53,17 +53,24 @@ def mask_gen(img_filepath):
     for centroid in mask_centroids:
         distances.append(ruler(*centroid, len(img)-1, len(img)-1))
     # Minimum distance centroid from bottom right
-    min_idx = distances.index(min(distances))
-    print("southeast-most centroid index: " + str(min_idx))
-    # remove labeled regions in for loop?
-    for idx, region in enumerate(measure.regionprops(label_mask)):
-        if idx != min_idx:
-            for region_coord in region.coords:
-                x = region_coord[0]
-                y = region_coord[1]
-                print("x:" + str(x))
-                print("y: " + str(y))
-                cleared_mask[x, y] = 0
+    try:
+        min_idx = distances.index(min(distances))
+        print("southeast-most centroid index: " + str(min_idx))
+        # remove labeled regions in for loop?
+        for idx, region in enumerate(measure.regionprops(label_mask)):
+            if idx != min_idx:
+                for region_coord in region.coords:
+                    x = region_coord[0]
+                    y = region_coord[1]
+                    print("x:" + str(x))
+                    print("y: " + str(y))
+                    cleared_mask[x, y] = 0
+    except ValueError:
+        img = [[]]
+        img_smooth = [[]]
+        img_otsu = [[]]
+        final_mask = [[]]
+        cleared_mask = [[]]
     return (img, img_smooth, img_otsu, final_mask, cleared_mask)
 
 

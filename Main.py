@@ -70,23 +70,31 @@ with open("Results/results.csv", "w") as f:
                 poi_mask = iu.mask_gen(poi_filepath)[-1]
                 # area and segmentation
                 nuc_mask = iu.mask_gen(nuc_filepath)[-1]
-                cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
-                try:
-                    fluo_ratio = round(float(nucleus.sum()) /
-                                       float(cytoplasm.sum()), 3)
-                except ZeroDivisionError:
-                    fluo_ratio = 0
-                poi_label = iu.img_labeler(poi_mask)
-                poi_area = iu.area_measure(poi_label)
-                poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
-                nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
-                minutes = round(elapsed_time.seconds/60.0, 3)
-                print(poi_filepath + "\n" + nuc_filepath)
-                f.write(str(elapsed_time.seconds/60.0) + ',')
-                f.write(str(fluo_ratio) + ',')
-                f.write(str(poi_aspect_ratio) + ',')
-                f.write(str(poi_area) + ',')
-                f.write(str(nuc_area) + ',')
+                if((len(poi_mask) == 0) | (len(nuc_mask) == 0)):
+                    f.write(str(','))
+                    f.write(str(','))
+                    f.write(str(','))
+                    f.write(str(','))
+                    f.write(str(','))
+                else:
+                    cytoplasm, nucleus = iu.mask_segmenter(nuc_mask,
+                                                           poi_filepath)
+                    try:
+                        fluo_ratio = round(float(nucleus.sum()) /
+                                           float(cytoplasm.sum()), 3)
+                    except ZeroDivisionError:
+                        fluo_ratio = 0
+                    poi_label = iu.img_labeler(poi_mask)
+                    poi_area = iu.area_measure(poi_label)
+                    poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
+                    nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
+                    minutes = round(elapsed_time.seconds/60.0, 3)
+                    print(poi_filepath + "\n" + nuc_filepath)
+                    f.write(str(elapsed_time.seconds/60.0) + ',')
+                    f.write(str(fluo_ratio) + ',')
+                    f.write(str(poi_aspect_ratio) + ',')
+                    f.write(str(poi_area) + ',')
+                    f.write(str(nuc_area) + ',')
             f.write('\n')
         # print(time_series)
     #       print('frames:' + len(time_series))
