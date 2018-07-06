@@ -103,7 +103,6 @@ for path, subdirs, files in os.walk(exp_loc):
     for name in files:
         if fnmatch(name, pattern):
             img_filepaths.append(os.path.join(path, name))
-img_filepaths.sort()
 for k, filepath in enumerate(img_filepaths):
     new_filepath = re.sub('_ch.*', '', filepath)
     img_filepaths[k] = new_filepath
