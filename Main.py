@@ -145,7 +145,7 @@ for idx, position_fn in enumerate(position_filenames):
             contents = result_f.read()
         position_data = re.sub('\]', '', re.sub('\[', '', str(contents)))
         position_data = re.sub(' ', '', position_data)
-        position_results.append(position_data, ',')
+        position_results.append(position_data + ',')
     position_results_str = re.sub(
         '\]', '', re.sub('\[', '', str(position_results)))
     position_results_str = re.sub(' ', '', position_results_str)
