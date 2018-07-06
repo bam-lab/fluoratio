@@ -59,8 +59,16 @@ def analyzer(filepath_prefix):
                       "%r" % elapsed_time)
     assert type(elapsed_time) is dt.timedelta, assert_warning
     # mask generation
-    poi_mask = iu.mask_gen(poi_filepath)[-1]
-    nuc_mask = iu.mask_gen(nuc_filepath)[-1]
+    try:
+        poi_mask = iu.mask_gen(poi_filepath)[-1]
+        nuc_mask = iu.mask_gen(nuc_filepath)[-1]
+    except ValueError:
+        print("Unable to segment {}".format(filepath_prefix))
+        results_filename = "Results/" + position_name + \
+                           '_t' + str(frame_num) + '.csv'
+        with open(results_filename, "w") as result_csv:
+            result_csv.write("," + "," + "," + ",")
+        return
     # segmentation
     cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
     try:

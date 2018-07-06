@@ -64,7 +64,8 @@ def mask_gen(img_filepath):
                     y = region_coord[1]
                     cleared_mask[x, y] = 0
     except ValueError:
-        print("ValueError")
+        print("ValueError", img_filepath)
+        return ValueError
         img = [[]]
         img_smooth = [[]]
         img_otsu = [[]]
