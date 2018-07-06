@@ -63,11 +63,11 @@ def analyzer(filepath_prefix):
         poi_mask = iu.mask_gen(poi_filepath)[-1]
         nuc_mask = iu.mask_gen(nuc_filepath)[-1]
     except Exception as err:
-        print("{0}: writing null values for {1}".format(err, filepath_prefix))
         results_filename = "Results/" + position_name + \
                            '_t' + str(frame_num) + '.csv'
         with open(results_filename, "w") as result_csv:
             result_csv.write("," + "," + "," + ",")
+        print("{0}: wrote null values for {1}".format(err, filepath_prefix))
         return
     # segmentation
     cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
