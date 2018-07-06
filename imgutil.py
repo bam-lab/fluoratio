@@ -55,8 +55,8 @@ def mask_gen(img_filepath):
     # Minimum distance centroid from bottom right
     try:
         min_idx = distances.index(min(distances))
-        print("southeast-most centroid index: " + str(min_idx))
-        # remove labeled regions in for loop?
+        # print("southeast-most centroid index: " + str(min_idx))
+        # remove labeled regions in for loop
         for idx, region in enumerate(measure.regionprops(label_mask)):
             if idx != min_idx:
                 for region_coord in region.coords:
