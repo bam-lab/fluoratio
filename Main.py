@@ -63,7 +63,7 @@ def analyzer(filepath_prefix):
     # segmentation
     cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
     try:
-        fluo_ratio = round(float(nucleus.sum()) / float(cytoplasm).sum(), 3)
+        fluo_ratio = round(float(nucleus) / float(cytoplasm), 3)
     except ZeroDivisionError:
         fluo_ratio = 0
     poi_label = iu.img_labeler(poi_mask)
