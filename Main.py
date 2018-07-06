@@ -71,8 +71,14 @@ def analyzer(filepath_prefix):
         return
     # segmentation
     cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
+    iu.img_writer("Results/img/" + position_name + '_t' +
+                  str(frame_num) + "cytoplasm", cytoplasm)
+    iu.img_writer("Results/img/" + position_name + '_t' +
+                  str(frame_num) + "nucleus", nucleus)
+    cytoplasm_sum = sum(cytoplasm)
+    nucleus_sum = sum(nucleus)
     try:
-        fluo_ratio = round(float(nucleus) / float(cytoplasm), 3)
+        fluo_ratio = round(float(nucleus_sum) / float(cytoplasm_sum), 3)
     except ZeroDivisionError:
         fluo_ratio = 0
     poi_label = iu.img_labeler(poi_mask)
@@ -139,8 +145,9 @@ for position in positions:
 for idx, position_fn in enumerate(position_filenames):
     position_results = []
     for l in range(n_frames):
-        result_filepath = str("Results/" + position_fn +
-                              '_t{:02d}.csv'.format(l))
+        result_filepath = str(
+            "Results/" + str('_t{:0' +
+                             str(len(str(n_frames-1))) + 'd}.csv').format(l))
         with open(result_filepath, "r") as result_f:
             contents = result_f.read()
         position_data = re.sub('\]', '', re.sub('\[', '', str(contents)))
@@ -151,7 +158,8 @@ for idx, position_fn in enumerate(position_filenames):
     position_results_str = re.sub(' ', '', position_results_str)
     with open("Results/results.csv", "a") as fi:
         fi.write(str(idx + 1) + ',' + position_results_str + '\n')
-    print("Wrote Results/results.csv")
+
+print("Wrote Results/results.csv")
 
 end = time.time()
 print("Runtime:", str((end-start)/3600.0), "hours")

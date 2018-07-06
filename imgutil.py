@@ -72,6 +72,10 @@ def mask_gen(img_filepath):
     return (img, img_smooth, img_otsu, final_mask, cleared_mask)
 
 
+def img_writer(filename, img):
+    io.imsave(filename + '.png', img)
+
+
 def mask_segmenter(mask, img_filepath):
     first_px = mask[0, 0]
     assert type(first_px) is np.bool_, "input mask is not binary: %r" % mask
@@ -80,7 +84,7 @@ def mask_segmenter(mask, img_filepath):
     masked_img[mask] = 0        # zeros the pixels where mask is True
     masked_segment = deepcopy(img)
     masked_segment[~mask] = 0   # zeros pixels where mask is False
-    return masked_img.sum(), masked_segment.sum()
+    return masked_img, masked_segment
 
 
 def img_labeler(mask):
