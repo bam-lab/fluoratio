@@ -151,6 +151,7 @@ for idx, position_fn in enumerate(position_filenames):
     position_results_str = re.sub(' ', '', position_results_str)
     with open("Results/results.csv", "a") as fi:
         fi.write(str(idx + 1) + ',' + position_results_str + '\n')
+    print("Wrote Results/results.csv")
 
 end = time.time()
 print("Runtime:", str((end-start)/3600.0), "hours")
