@@ -34,12 +34,17 @@ n_frames = 71
 cpu_num = int(mp.cpu_count()) - 1  # Be nice, leave 1 processor free.
 
 
-def analyzer(filepath_prefix, first_time):
+def analyzer(filepath_prefix):
     analysis_start = time.time()
     # filepath construction
     poi_filepath = filepath_prefix + '_' + poi_channel + '.tif'
     nuc_filepath = filepath_prefix + '_' + nuc_channel + '.tif'
     # timestamp generation
+    # Need to retrieve first time from first_time.txt
+    with open("first_time.txt", "r") as time_read_f:
+        first_time_string = time_read_f.read()
+    first_time = dt.datetime.strptime(first_time_string,
+                                      "%Y-%m-%d %H:%M:%S.%f")
     position_name = filepath_prefix.split("/")[-2]
     metadata_path = re.sub("Position\d{3}_t.*", '', filepath_prefix) + \
         "MetaData/" + position_name + "_Properties.xml"
@@ -85,6 +90,11 @@ n_pos = len(positions)
 print(positions[0])
 first_md_path = glob.glob(positions[0] + "/MetaData/*_Properties.xml")
 first_time = mu.get_time(first_md_path[0], 0)
+
+with open("first_time.txt", "w") as first_time_f:
+    first_time_f.write(str(first_time))
+
+
 pattern = "*.tif"
 img_filepaths = []
 for path, subdirs, files in os.walk(exp_loc):
@@ -96,6 +106,7 @@ for k, filepath in enumerate(img_filepaths):
     new_filepath = re.sub('_ch.*', '', filepath)
     img_filepaths[k] = new_filepath
 
+# Making the process worker pool.
 if __name__ == '__main__':
     with mp.Pool(processes=(cpu_num)) as pool:
         pool.map(analyzer, img_filepaths)
