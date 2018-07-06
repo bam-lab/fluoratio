@@ -10,26 +10,93 @@
 # limitations under the License.
 import datetime as dt
 import glob
+import os
+import re
+from fnmatch import fnmatch
+import multiprocessing as mp
+import time
 
 import imgutil as iu
 import metadatautil as mu
 
+start = time.time()
 
 # File selector
 # exp_loc = input("Enter the full filepath to the experiment directory" +
 #                 " (Mark_and_Find_NNN): ")
 exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_002"
 # n_frames = int(input("Number of frames in a sequence: "))
-# nuc_channel = input("Which channel has the NLS protein? ch00 or ch01 ")
+# nuc_channel = input("Which channel has the NLS protein? ch00/ch01/ch02")
+# poi_channel = input("Which channel has the POI? ch00/ch01/ch02")
 nuc_channel = "ch01"
+poi_channel = "ch00"
 n_frames = 71
+cpu_num = int(mp.cpu_count()) - 1  # Be nice, leave 1 processor free.
+
+
+def analyzer(filepath_prefix, first_time):
+    # filepath construction
+    poi_filepath = filepath_prefix + '_' + poi_channel + '.tif'
+    nuc_filepath = filepath_prefix + '_' + nuc_channel + '.tif'
+    # timestamp generation
+    position_name = filepath_prefix.split("/")[-2]
+    metadata_path = re.sub("Position\d{3}_t.*", '', filepath_prefix) + \
+        "MetaData/" + position_name + "_Properties.xml"
+    frame_num = filepath_prefix.split("_")[-1].split("t")[-1]
+    timestamp = mu.get_time(metadata_path, int(frame_num))
+    elapsed_time = timestamp - first_time
+    if elapsed_time.days < 0:
+        elapsed_time = dt.timedelta(0, elapsed_time.seconds,
+                                    elapsed_time.microseconds)
+    assert_warning = ("elapsed_time is not a timedelta: "
+                      "%r" % elapsed_time)
+    assert type(elapsed_time) is dt.timedelta, assert_warning
+    # mask generation
+    poi_mask = iu.mask_gen(poi_filepath)[-1]
+    nuc_mask = iu.mask_gen(nuc_filepath)[-1]
+    # segmentation
+    cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
+    try:
+        fluo_ratio = round(float(nucleus.sum()) / float(cytoplasm).sum(), 3)
+    except ZeroDivisionError:
+        fluo_ratio = 0
+    poi_label = iu.img_labeler(poi_mask)
+    poi_area = iu.area_measure(poi_label)
+    poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
+    nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
+    minutes = round(elapsed_time.seconds/60.0, 3)
+    print(poi_filepath, "\n", nuc_filepath)
+    # Writes to Results/PositionXXtYY.csv in the form:
+    # minutes, fluorescence ratio, POI aspect ratio, POI area, nucleus area
+    results_filename = "Results/" + \
+        position_name + '_t' + str(frame_num) + 'csv'
+    with open(results_filename, "w") as result_csv:
+        result_csv.write(minutes, ",", fluo_ratio, ",",
+                         poi_aspect_ratio, ",", poi_area, ",", nuc_area)
+
+
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
 positions.sort()
 n_pos = len(positions)
 print(positions[0])
-md_path = glob.glob(positions[0] + "/MetaData/*_Properties.xml")
-first_time = mu.get_time(md_path[0], 0)
-# print(timeshift)
+first_md_path = glob.glob(positions[0] + "/MetaData/*_Properties.xml")
+first_time = mu.get_time(first_md_path[0], 0)
+pattern = "*.tif"
+img_filepaths = []
+for path, subdirs, files in os.walk(exp_loc):
+    for name in files:
+        if fnmatch(name, pattern):
+            img_filepaths.append(os.path.join(path, name))
+img_filepaths.sort()
+for k, filepath in enumerate(img_filepaths):
+    new_filepath = re.sub('_ch.*', '', filepath)
+    img_filepaths[k] = new_filepath
+
+if __name__ == '__main__':
+    with mp.Pool(processes=(cpu_num)) as pool:
+        pool.map(analyzer, img_filepaths)
+
+# Coalesce all the result csv files into one
 print("hello there")
 with open("Results/results.csv", "w") as f:
     f.write("Position")
@@ -40,62 +107,25 @@ with open("Results/results.csv", "w") as f:
         f.write(",ca" + str(i))  # cell area
         f.write(",na" + str(i))  # nucleus area
     f.write("\n")
-    # Iterates through positions in mark & find experiment
-    for index, pos in enumerate(positions):
-        time_series = glob.glob(pos + '/' + '*.tif')  # list of full filepaths
-        time_series.sort()
-        metadata_dir = pos + '/MetaData/'
-        f.write(str(index + 1) + ',')
-        # iterate through time series for position
-        for idx, frame in enumerate(time_series):  # this counts each channel
-            timestamp = mu.get_time(
-                metadata_dir +
-                str(pos.split('/')[-1]) + '_Properties.xml', idx)
-            # print(str(timestamp) + " " + str(pos) + " " + str(frame))
-            if idx % 2 == 0:
-                elapsed_time = timestamp - first_time
-                if elapsed_time.days < 0:
-                    elapsed_time = dt.timedelta(0, elapsed_time.seconds,
-                                                elapsed_time.microseconds)
-                assert_warning = ("elapsed_time is not a timedelta: "
-                                  "%r" % elapsed_time)
-                assert type(elapsed_time) is dt.timedelta, assert_warning
-                if nuc_channel == "ch01":
-                    poi_filepath = time_series[idx]
-                    nuc_filepath = time_series[idx + 1]
-                else:
-                    poi_filepath = time_series[idx + 1]
-                    nuc_filepath = time_series[idx]
-                # area and aspect ratio
-                poi_mask = iu.mask_gen(poi_filepath)[-1]
-                # area and segmentation
-                nuc_mask = iu.mask_gen(nuc_filepath)[-1]
-                if((len(poi_mask) == 0) | (len(nuc_mask) == 0)):
-                    f.write(str(','))
-                    f.write(str(','))
-                    f.write(str(','))
-                    f.write(str(','))
-                    f.write(str(','))
-                else:
-                    cytoplasm, nucleus = iu.mask_segmenter(nuc_mask,
-                                                           poi_filepath)
-                    try:
-                        fluo_ratio = round(float(nucleus.sum()) /
-                                           float(cytoplasm.sum()), 3)
-                    except ZeroDivisionError:
-                        fluo_ratio = 0
-                    poi_label = iu.img_labeler(poi_mask)
-                    poi_area = iu.area_measure(poi_label)
-                    poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
-                    nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
-                    minutes = round(elapsed_time.seconds/60.0, 3)
-                    print(poi_filepath + "\n" + nuc_filepath)
-                    f.write(str(elapsed_time.seconds/60.0) + ',')
-                    f.write(str(fluo_ratio) + ',')
-                    f.write(str(poi_aspect_ratio) + ',')
-                    f.write(str(poi_area) + ',')
-                    f.write(str(nuc_area) + ',')
-            f.write('\n')
-        # print(time_series)
-    #       print('frames:' + len(time_series))
-    # print(positions)
+# TODO: read in all mini csv files into main results.csv
+# Subdivide into position sublists, then read each one individually?
+position_filenames = []
+for position in positions:
+    position_filenames.append(position.split('/')[-1])
+
+for idx, position_fn in enumerate(position_filenames):
+    position_results = []
+    for l in range(n_frames):
+        result_filepath = str("Results/", position_fn,
+                              't{:03d}.csv'.format(int(l)),)
+        with open(result_filepath, "r") as result_f:
+            contents = result_f.read()
+        position_data = re.sub('\]', '', re.sub('\[', '', str(contents)))
+        position_results.append(position_data, ',')
+    position_results_str = re.sub(
+        '\]', '', re.sub('\[', '', str(position_results)))
+    with open("Results/results.csv", "a") as fi:
+        fi.write(str(idx + 1), ',', position_results_str, '\n')
+
+end = time.time()
+print("Runtime:", str((end-start)/3600.0), "hours")
