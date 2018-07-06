@@ -22,15 +22,15 @@ import metadatautil as mu
 start = time.time()
 
 # File selector
-# exp_loc = input("Enter the full filepath to the experiment directory" +
-#                 " (Mark_and_Find_NNN): ")
-exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_002"
-# n_frames = int(input("Number of frames in a sequence: "))
-# nuc_channel = input("Which channel has the NLS protein? ch00/ch01/ch02")
-# poi_channel = input("Which channel has the POI? ch00/ch01/ch02")
-nuc_channel = "ch01"
-poi_channel = "ch00"
-n_frames = 71
+exp_loc = input("Enter the full filepath to the experiment directory" +
+                " (Mark_and_Find_NNN): ")
+# exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_002"
+n_frames = int(input("Number of frames in a sequence: "))
+nuc_channel = input("Which channel has the NLS protein? ch00/ch01/ch02")
+poi_channel = input("Which channel has the POI? ch00/ch01/ch02")
+# nuc_channel = "ch01"
+# poi_channel = "ch00"
+# n_frames = 71
 cpu_num = int(mp.cpu_count()) - 1  # Be nice, leave 1 processor free.
 
 
