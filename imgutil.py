@@ -12,7 +12,6 @@
 
 import matplotlib as mpl
 mpl.use("Agg")
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from copy import deepcopy
 
