@@ -84,7 +84,9 @@ def mask_segmenter(mask, img_filepath):
     masked_img[mask] = 0        # zeros the pixels where mask is True
     masked_segment = deepcopy(img)
     masked_segment[~mask] = 0   # zeros pixels where mask is False
-    return masked_img, masked_segment
+    masked_img_sum = masked_img.sum()
+    masked_segment_sum = masked_segment.sum()
+    return masked_img, masked_img_sum, masked_segment, masked_segment_sum
 
 
 def img_labeler(mask):

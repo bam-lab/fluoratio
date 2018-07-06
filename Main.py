@@ -70,15 +70,13 @@ def analyzer(filepath_prefix):
         print("{0}: wrote null values for {1}".format(err, filepath_prefix))
         return
     # segmentation
-    cytoplasm, nucleus = iu.mask_segmenter(nuc_mask, poi_filepath)
+    cyto, cyto_sum, nuc, nuc_sum = iu.mask_segmenter(nuc_mask, poi_filepath)
     iu.img_writer("Results/img/" + position_name + '_t' +
-                  str(frame_num) + "cytoplasm", cytoplasm)
+                  str(frame_num) + "cyto", cyto)
     iu.img_writer("Results/img/" + position_name + '_t' +
-                  str(frame_num) + "nucleus", nucleus)
-    cytoplasm_sum = sum(cytoplasm)
-    nucleus_sum = sum(nucleus)
+                  str(frame_num) + "nuc", nuc)
     try:
-        fluo_ratio = round(float(nucleus_sum) / float(cytoplasm_sum), 3)
+        fluo_ratio = round(float(nuc_sum) / float(cyto_sum), 3)
     except ZeroDivisionError:
         fluo_ratio = 0
     poi_label = iu.img_labeler(poi_mask)
