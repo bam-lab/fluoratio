@@ -115,9 +115,9 @@ for k, filepath in enumerate(img_filepaths):
     img_filepaths[k] = new_filepath
 
 # Making the process worker pool.
-if __name__ == '__main__':
-    with mp.Pool(processes=(cpu_num)) as pool:
-        pool.map(analyzer, img_filepaths)
+# if __name__ == '__main__':
+#     with mp.Pool(processes=(cpu_num)) as pool:
+#         pool.map(analyzer, img_filepaths)
 
 # Coalesce all the result csv files into one
 print("hello there")
@@ -139,8 +139,8 @@ for position in positions:
 for idx, position_fn in enumerate(position_filenames):
     position_results = []
     for l in range(n_frames):
-        result_filepath = str("Results/", position_fn,
-                              '_t{:03d}.csv'.format(int(l)))
+        result_filepath = str("Results/" + position_fn +
+                              '_t{:03d}.csv'.format(l))
         with open(result_filepath, "r") as result_f:
             contents = result_f.read()
         position_data = re.sub('\]', '', re.sub('\[', '', str(contents)))
