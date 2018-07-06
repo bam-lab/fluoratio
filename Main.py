@@ -24,7 +24,7 @@ start = time.time()
 # File selector
 # exp_loc = input("Enter the full filepath to the experiment directory" +
 #                 " (Mark_and_Find_NNN): ")
-exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_002"
+exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_003"
 # n_frames = int(input("Number of frames in a sequence: "))
 # nuc_channel = input("Which channel has the NLS protein? ch00/ch01/ch02")
 # poi_channel = input("Which channel has the POI? ch00/ch01/ch02")
