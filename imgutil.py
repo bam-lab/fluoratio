@@ -62,8 +62,6 @@ def mask_gen(img_filepath):
                 for region_coord in region.coords:
                     x = region_coord[0]
                     y = region_coord[1]
-                    print("x:" + str(x))
-                    print("y: " + str(y))
                     cleared_mask[x, y] = 0
     except ValueError:
         print("ValueError")
