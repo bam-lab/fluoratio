@@ -77,8 +77,8 @@ def analyzer(filepath_prefix):
     results_filename = "Results/" + \
         position_name + '_t' + str(frame_num) + 'csv'
     with open(results_filename, "w") as result_csv:
-        result_csv.write(minutes, ",", fluo_ratio, ",",
-                         poi_aspect_ratio, ",", poi_area, ",", nuc_area)
+        result_csv.write(minutes + "," + fluo_ratio + "," +
+                         poi_aspect_ratio + "," + poi_area + "," + nuc_area)
     analysis_end = time.time()
     analysis_time = round((analysis_end - analysis_start)/60, 3)
     print("Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
@@ -136,11 +136,13 @@ for idx, position_fn in enumerate(position_filenames):
         with open(result_filepath, "r") as result_f:
             contents = result_f.read()
         position_data = re.sub('\]', '', re.sub('\[', '', str(contents)))
+        position_data = re.sub(' ', '', position_data)
         position_results.append(position_data, ',')
     position_results_str = re.sub(
         '\]', '', re.sub('\[', '', str(position_results)))
+    position_results_str = re.sub(' ', '', position_results_str)
     with open("Results/results.csv", "a") as fi:
-        fi.write(str(idx + 1), ',', position_results_str, '\n')
+        fi.write(str(idx + 1) + ',' + position_results_str + '\n')
 
 end = time.time()
 print("Runtime:", str((end-start)/3600.0), "hours")
