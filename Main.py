@@ -76,7 +76,7 @@ def analyzer(filepath_prefix):
     # Writes to Results/PositionXXtYY.csv in the form:
     # minutes, fluorescence ratio, POI aspect ratio, POI area, nucleus area
     results_filename = "Results/" + \
-        position_name + '_t' + str(frame_num) + 'csv'
+        position_name + '_t' + str(frame_num) + '.csv'
     with open(results_filename, "w") as result_csv:
         result_csv.write(str(minutes) + "," + str(fluo_ratio) + "," +
                          str(poi_aspect_ratio) + "," + str(poi_area) +
