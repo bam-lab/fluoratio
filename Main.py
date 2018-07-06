@@ -35,6 +35,7 @@ cpu_num = int(mp.cpu_count()) - 1  # Be nice, leave 1 processor free.
 
 
 def analyzer(filepath_prefix, first_time):
+    analysis_start = time.time()
     # filepath construction
     poi_filepath = filepath_prefix + '_' + poi_channel + '.tif'
     nuc_filepath = filepath_prefix + '_' + nuc_channel + '.tif'
@@ -73,6 +74,9 @@ def analyzer(filepath_prefix, first_time):
     with open(results_filename, "w") as result_csv:
         result_csv.write(minutes, ",", fluo_ratio, ",",
                          poi_aspect_ratio, ",", poi_area, ",", nuc_area)
+    analysis_end = time.time()
+    analysis_time = round((analysis_end - analysis_start)/60, 3)
+    print("Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
 
 
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
