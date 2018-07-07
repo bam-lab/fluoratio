@@ -101,7 +101,7 @@ def analyzer(filepath_prefix):
           "Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
 
 
-print(dt.datetime.now(), "Data location: ", exp_loc)
+print(dt.datetime.now(), "Data location:\n ", exp_loc)
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
 positions.sort()
 n_pos = len(positions)
