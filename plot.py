@@ -31,11 +31,19 @@ print(fluo_ratio_long)
 
 # lmplot for hues, regplot for single positions
 
-sns.lmplot(x="t",
-           y="r",
-           hue="Position",
-           fit_reg=False,
-           data=fluo_ratio_long)
+plot = sns.lmplot(x="t",
+                  y="r",
+                  hue="Position",
+                  fit_reg=False,
+                  data=fluo_ratio_long)
+
+plot = (plot.set_axis_labels("Time (min)",
+                             "Nucleus to Cytoplasm Fluorescence Ratio" +
+                             " (no units)"))
+plot = sns.set_context("poster")
+plot = sns.set_style("white", {"axes.linewidth": 0.75,
+                               "font": "Helvetica",
+                               'axes.edgecolor': '0'})  # 0 = black, 1 = white)
 
 # sns.boxplot(x="Drug",
 #             y=y_label,
@@ -44,5 +52,6 @@ sns.lmplot(x="t",
 #             data=fluo_ratio)
 
 # plt.legend().set_visible(False)
-# plt.savefig("fluo_ratio_2-1.png")
+plt.savefig("Results/fluo_ratio.png")
+plt.savefig("Results/fluo_ratio.svg")
 plt.show()
