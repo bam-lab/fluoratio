@@ -147,8 +147,8 @@ for idx, position_fn in enumerate(position_filenames):
     position_results = []
     for l in range(n_frames):
         result_filepath = str(
-            "Results/" + str('_t{:0' +
-                             str(len(str(n_frames-1))) + 'd}.csv').format(l))
+            "Results/" + position_fn +
+            str('_t{:0' + str(len(str(n_frames-1))) + 'd}.csv').format(l))
         with open(result_filepath, "r") as result_f:
             contents = result_f.read()
         position_data = re.sub('\]', '', re.sub('\[', '', str(contents)))
