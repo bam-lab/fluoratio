@@ -31,7 +31,7 @@ poi_channel = input("Which channel has the POI? ch00/ch01/ch02: ")
 # nuc_channel = "ch01"
 # poi_channel = "ch00"
 # n_frames = 71
-cpu_num = int(mp.cpu_count()) - 1  # Be nice, leave 1 processor free.
+cpu_num = int(mp.cpu_count()) - 2  # Be nice, leave 2 cores free.
 
 
 def analyzer(filepath_prefix):
