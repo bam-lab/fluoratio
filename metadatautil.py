@@ -25,9 +25,11 @@ from datetime import datetime
 def get_time(mdpath, frame):
     tree = ET.parse(mdpath)
     root = tree.getroot()
+    date = root[0][3][frame].attrib['Date']
     timestring = root[0][3][frame].attrib['Time']
     ms = root[0][3][frame].attrib['MiliSeconds']
-    timestamp = timestring + ' ' + '{:03d}'.format(int(ms)) + ' EST'
+    timestamp = "{0} {1} ".format(
+        date, timestring) + '{:03d} EST'.format(int(ms))
     # Parse "hh:mm:ss ms" string into its components
     #print(timestamp)
-    return datetime.strptime(timestamp, "%H:%M:%S %p %f %Z")
+    return datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S %p %f %Z")
