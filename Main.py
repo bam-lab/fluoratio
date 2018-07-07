@@ -36,7 +36,8 @@ cpu_num = int(mp.cpu_count()) - 1  # Be nice, leave 1 processor free.
 
 def analyzer(filepath_prefix):
     analysis_start = time.time()
-    print(str(dt.datetime.now()), "Analyzing {}".format(filepath_prefix))
+    current_frame = filepath_prefix.split("/")[-1]
+    print(str(dt.datetime.now()), "Analyzing {}".format(current_frame))
     # filepath construction
     poi_filepath = filepath_prefix + '_' + poi_channel + '.tif'
     nuc_filepath = filepath_prefix + '_' + nuc_channel + '.tif'
@@ -100,10 +101,10 @@ def analyzer(filepath_prefix):
           "Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
 
 
+print(dt.datetime.now(), "Data location: ", exp_loc)
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
 positions.sort()
 n_pos = len(positions)
-print(positions[0])
 first_md_path = glob.glob(positions[0] + "/MetaData/*_Properties.xml")
 first_time = mu.get_time(first_md_path[0], 0)
 
