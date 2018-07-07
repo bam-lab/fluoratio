@@ -1,10 +1,8 @@
-import numpy as np
 import pandas as pd
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-fluo_ratio = pd.read_csv('template.csv')
+fluo_ratio = pd.read_csv('Results/results.csv')
 print("WIDE")
 print(fluo_ratio)
 y_label = "Nucleus to Cytoplasm Fluorescence Ratio, n.u."
