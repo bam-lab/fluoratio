@@ -161,14 +161,11 @@ for idx, position_fn in enumerate(position_filenames):
     position_results_str = re.sub("'", "", position_results_str)
     with open("Results/results.csv", "a") as fi:
         fi.write(str(idx + 1) + ',' + position_results_str + '\n')
-    # Removing trailing comma in final line
-    with open("Results/results.csv", 'rb+') as filehandle:
-        filehandle.seek(-1, os.SEEK_END)
-        filehandle.truncate()
     # Removing trailing comma in other lines
     with open("Results/results.csv", "r") as res_fi_read:
         full_result_str = res_fi_read.read()
         full_result_str = re.sub(",\n", "\n", full_result_str)
+        full_result_str = full_result_str[:-1]
 
     # Rewriting results.csv
     os.remove("Results/results.csv")
