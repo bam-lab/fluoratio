@@ -36,7 +36,7 @@ cpu_num = int(mp.cpu_count()) - 1  # Be nice, leave 1 processor free.
 
 def analyzer(filepath_prefix):
     analysis_start = time.time()
-    print("Analyzing {}".format(filepath_prefix))
+    print(str(dt.datetime.now()), "Analyzing {}".format(filepath_prefix))
     # filepath construction
     poi_filepath = filepath_prefix + '_' + poi_channel + '.tif'
     nuc_filepath = filepath_prefix + '_' + nuc_channel + '.tif'
@@ -67,7 +67,9 @@ def analyzer(filepath_prefix):
                            '_t' + str(frame_num) + '.csv'
         with open(results_filename, "w") as result_csv:
             result_csv.write("," + "," + "," + ",")
-        print("{0}: wrote null values for {1}".format(err, filepath_prefix))
+            print(str(dt.datetime.now()),
+                  "{0}: wrote null values for {1}".format(err,
+                                                          filepath_prefix))
         return
     # segmentation
     cyto, cyto_sum, nuc, nuc_sum = iu.mask_segmenter(nuc_mask, poi_filepath)
@@ -94,7 +96,8 @@ def analyzer(filepath_prefix):
                          "," + str(nuc_area))
     analysis_end = time.time()
     analysis_time = round((analysis_end - analysis_start)/60, 3)
-    print("Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
+    print(str(dt.datetime.now()),
+          "Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
 
 
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
@@ -157,7 +160,7 @@ for idx, position_fn in enumerate(position_filenames):
     with open("Results/results.csv", "a") as fi:
         fi.write(str(idx + 1) + ',' + position_results_str + '\n')
 
-print("Wrote Results/results.csv")
+print(str(dt.datetime.now()), "Wrote Results/results.csv")
 
 end = time.time()
-print("Runtime:", str((end-start)/3600.0), "hours")
+print(str(dt.datetime.now()), "Runtime:", str((end-start)/3600.0), "hours")
