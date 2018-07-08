@@ -28,15 +28,24 @@ def get_time(mdpath, frame):
     root = tree.getroot()
     try:
         date = root[0][3][exposure_num].attrib['Date']
-        timestring = root[0][3][exposure_num].attrib['Time']
+        time = root[0][3][exposure_num].attrib['Time']
         ms = root[0][3][exposure_num].attrib['MiliSeconds']
-        timestamp = "{0} {1} ".format(
-            date, timestring) + '{:03d} EST'.format(int(ms))
+        timestamp_string = "{0} {1} ".format(
+            date, time) + '{:03d} EST'.format(int(ms))
     except IndexError:
         raise IndexError(frame, "is out of range")
-    # Parse "hh:mm:ss ms" string into its components
     #print(timestamp)
-    return datetime.strptime(timestamp, "%Y-%m-%d %I:%M:%S %p %f %Z")
+    try:
+        timestamp = datetime.strptime(timestamp_string, "%Y-%m-%d %I:%M:%S %p %f %Z")
+    # in case date is in format M/D/YYYY
+    except ValueError:
+        month = int(timestamp_string.split("/")[0])
+        day_of_month = int(timestamp_string.split("/")[1])
+        timestamp_string = "{:02d}/".format(month) +
+                            "{:02d}/".format(day_of_month) +
+                            timestamp_string.split("/")[2]
+        timestamp = datetime.strptime(timestamp_string, "%m/%d/%Y %I:%M:%S %p %f %Z")
+    return timestamp
 
 
 # Get scale in microns per pixel
