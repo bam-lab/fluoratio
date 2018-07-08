@@ -41,9 +41,9 @@ def get_time(mdpath, frame):
     except ValueError:
         month = int(timestamp_string.split("/")[0])
         day_of_month = int(timestamp_string.split("/")[1])
-        timestamp_string = "{:02d}/".format(month) +
+        timestamp_string = str("{:02d}/".format(month) +
                             "{:02d}/".format(day_of_month) +
-                            timestamp_string.split("/")[2]
+                            timestamp_string.split("/")[2])
         timestamp = datetime.strptime(timestamp_string, "%m/%d/%Y %I:%M:%S %p %f %Z")
     return timestamp
 
