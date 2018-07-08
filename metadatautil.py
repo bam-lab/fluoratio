@@ -36,7 +36,7 @@ def get_time(mdpath, frame):
         raise IndexError(frame, "is out of range")
     # Parse "hh:mm:ss ms" string into its components
     #print(timestamp)
-    return datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S %p %f %Z")
+    return datetime.strptime(timestamp, "%Y-%m-%d %I:%M:%S %p %f %Z")
 
 
 # Get scale in microns per pixel
