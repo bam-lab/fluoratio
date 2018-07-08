@@ -23,7 +23,7 @@ from datetime import datetime
 
 # Get first absolute time for a position.
 def get_time(mdpath, frame):
-    exposure_num = (frame + 1) * 3
+    exposure_num = frame * 3
     tree = ET.parse(mdpath)
     root = tree.getroot()
     try:
