@@ -23,13 +23,17 @@ from datetime import datetime
 
 # Get first absolute time for a position.
 def get_time(mdpath, frame):
+    exposure_num = (frame + 1) * 3
     tree = ET.parse(mdpath)
     root = tree.getroot()
-    date = root[0][3][frame].attrib['Date']
-    timestring = root[0][3][frame].attrib['Time']
-    ms = root[0][3][frame].attrib['MiliSeconds']
-    timestamp = "{0} {1} ".format(
-        date, timestring) + '{:03d} EST'.format(int(ms))
+    try:
+        date = root[0][3][exposure_num].attrib['Date']
+        timestring = root[0][3][exposure_num].attrib['Time']
+        ms = root[0][3][exposure_num].attrib['MiliSeconds']
+        timestamp = "{0} {1} ".format(
+            date, timestring) + '{:03d} EST'.format(int(ms))
+    except IndexError:
+        raise IndexError(frame, "is out of range")
     # Parse "hh:mm:ss ms" string into its components
     #print(timestamp)
     return datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S %p %f %Z")

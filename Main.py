@@ -51,14 +51,13 @@ def analyzer(filepath_prefix):
     metadata_path = re.sub("Position\d{3}_t.*", '', filepath_prefix) + \
         "MetaData/" + position_name + "_Properties.xml"
     frame_num = filepath_prefix.split("_")[-1].split("t")[-1]
-    timestamp = mu.get_time(metadata_path, int(frame_num))
-    elapsed_time = timestamp - first_time
     # microns per pixel scale
     scale = mu.get_scale(metadata_path)
     # mask generation
     try:
         poi_mask = iu.mask_gen(poi_filepath)[-1]
         nuc_mask = iu.mask_gen(nuc_filepath)[-1]
+        timestamp = mu.get_time(metadata_path, int(frame_num))
     except Exception as err:
         results_filename = "Results/" + position_name + \
                            '_t' + str(frame_num) + '.csv'
@@ -68,6 +67,7 @@ def analyzer(filepath_prefix):
                   "{0}: wrote null values for {1}".format(err,
                                                           filepath_prefix))
         return
+    elapsed_time = timestamp - first_time
     # segmentation
     cyto, cyto_sum, nuc, nuc_sum = iu.mask_segmenter(nuc_mask, poi_filepath)
     iu.img_writer("Results/img/" + position_name + '_t' +

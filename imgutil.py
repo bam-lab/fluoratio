@@ -64,11 +64,6 @@ def mask_gen(img_filepath):
                     cleared_mask[x, y] = 0
     except ValueError:
         raise ValueError("Couldn't segment", img_filepath)
-        img = [[]]
-        img_smooth = [[]]
-        img_otsu = [[]]
-        final_mask = [[]]
-        cleared_mask = [[]]
     return (img, img_smooth, img_otsu, final_mask, cleared_mask)
 
 
