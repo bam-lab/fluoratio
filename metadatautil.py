@@ -33,3 +33,11 @@ def get_time(mdpath, frame):
     # Parse "hh:mm:ss ms" string into its components
     #print(timestamp)
     return datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S %p %f %Z")
+
+
+# Get scale in microns per pixel
+def get_scale(mdpath):
+    tree = ET.parse(mdpath)
+    root = tree.getroot()
+    scale = root[0][2][4][0].attrib['Voxel']
+    return float(scale)

@@ -53,6 +53,8 @@ def analyzer(filepath_prefix):
     frame_num = filepath_prefix.split("_")[-1].split("t")[-1]
     timestamp = mu.get_time(metadata_path, int(frame_num))
     elapsed_time = timestamp - first_time
+    # microns per pixel scale
+    scale = mu.get_scale(metadata_path)
     # mask generation
     try:
         poi_mask = iu.mask_gen(poi_filepath)[-1]
@@ -77,9 +79,9 @@ def analyzer(filepath_prefix):
     except ZeroDivisionError:
         fluo_ratio = ''
     poi_label = iu.img_labeler(poi_mask)
-    poi_area = iu.area_measure(poi_label)
+    poi_area = iu.area_measure(poi_label) * scale
     poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
-    nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
+    nuc_area = iu.area_measure(iu.img_labeler(nuc_mask)) * scale
     minutes = round(elapsed_time.total_seconds()/60.0, 3)
     # Writes to Results/PositionXXtYY.csv in the form:
     # minutes, fluorescence ratio, POI aspect ratio, POI area, nucleus area
