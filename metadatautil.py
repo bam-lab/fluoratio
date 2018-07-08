@@ -34,17 +34,18 @@ def get_time(mdpath, frame):
             date, time) + '{:03d} EST'.format(int(ms))
     except IndexError:
         raise IndexError(frame, "is out of range")
-    #print(timestamp)
     try:
-        timestamp = datetime.strptime(timestamp_string, "%Y-%m-%d %I:%M:%S %p %f %Z")
+        timestamp = datetime.strptime(
+            timestamp_string, "%Y-%m-%d %I:%M:%S %p %f %Z")
     # in case date is in format M/D/YYYY
     except ValueError:
         month = int(timestamp_string.split("/")[0])
         day_of_month = int(timestamp_string.split("/")[1])
         timestamp_string = str("{:02d}/".format(month) +
-                            "{:02d}/".format(day_of_month) +
-                            timestamp_string.split("/")[2])
-        timestamp = datetime.strptime(timestamp_string, "%m/%d/%Y %I:%M:%S %p %f %Z")
+                               "{:02d}/".format(day_of_month) +
+                               timestamp_string.split("/")[2])
+        timestamp = datetime.strptime(
+            timestamp_string, "%m/%d/%Y %I:%M:%S %p %f %Z")
     return timestamp
 
 
@@ -54,3 +55,10 @@ def get_scale(mdpath):
     root = tree.getroot()
     scale = root[0][2][4][0].attrib['Voxel']
     return float(scale)
+
+
+def get_bit_depth(mdpath, channel):
+    tree = ET.parse(mdpath)
+    root = tree.getroot()
+    bit_depth = int(root[0][2][3][channel].attrib["Resolution"])
+    return bit_depth
