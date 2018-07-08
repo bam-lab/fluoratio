@@ -176,4 +176,5 @@ with open("Results/results.csv", "w") as res_file_write:
 print(str(dt.datetime.now()), "Wrote Results/results.csv")
 
 end = time.time()
-print(str(dt.datetime.now()), "Runtime:", str((end-start)/3600.0), "hours")
+print(str(dt.datetime.now()), "Runtime:", str(
+    round((end-start)/3600.0), 3), "hours")
