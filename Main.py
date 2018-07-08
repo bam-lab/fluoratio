@@ -53,12 +53,6 @@ def analyzer(filepath_prefix):
     frame_num = filepath_prefix.split("_")[-1].split("t")[-1]
     timestamp = mu.get_time(metadata_path, int(frame_num))
     elapsed_time = timestamp - first_time
-    if elapsed_time.days < 0:
-        elapsed_time = dt.timedelta(0, elapsed_time.seconds,
-                                    elapsed_time.microseconds)
-    assert_warning = ("elapsed_time is not a timedelta: "
-                      "%r" % elapsed_time)
-    assert type(elapsed_time) is dt.timedelta, assert_warning
     # mask generation
     try:
         poi_mask = iu.mask_gen(poi_filepath)[-1]
