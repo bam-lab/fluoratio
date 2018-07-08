@@ -80,7 +80,7 @@ def analyzer(filepath_prefix):
     poi_area = iu.area_measure(poi_label)
     poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
     nuc_area = iu.area_measure(iu.img_labeler(nuc_mask))
-    minutes = round(elapsed_time.seconds/60.0, 3)
+    minutes = round(elapsed_time.total_seconds/60.0, 3)
     # Writes to Results/PositionXXtYY.csv in the form:
     # minutes, fluorescence ratio, POI aspect ratio, POI area, nucleus area
     results_filename = "Results/" + \
