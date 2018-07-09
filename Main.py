@@ -85,6 +85,11 @@ def analyzer(filepath_prefix):
         fluo_ratio = round(float(nuc_sum) / float(cyto_sum), 3)
     except ZeroDivisionError:
         fluo_ratio = ''
+    if fluo_ratio == 0.0:
+        result_csv.write("," + "," + "," + ",")
+        print(str(dt.datetime.now()),
+              "Ratio = 0: wrote null values for {}".format(
+                  filepath_prefix))
     poi_label = iu.img_labeler(poi_mask)
     poi_area = iu.area_measure(poi_label) * scale
     poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
