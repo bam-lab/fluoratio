@@ -58,9 +58,6 @@ def analyzer(filepath_prefix):
     metadata_path = re.sub("Position\d{3}_t.*", '', filepath_prefix) + \
         "MetaData/" + position_name + "_Properties.xml"
     frame_num = filepath_prefix.split("_")[-1].split("t")[-1]
-    # bit depth
-    poi_bit_depth = mu.get_bit_depth(metadata_path, int(poi_channel))
-    nuc_bit_depth = mu.get_bit_depth(metadata_path, int(nuc_channel))
     # microns per pixel scale
     scale = mu.get_scale(metadata_path)
     # mask generation
@@ -81,9 +78,9 @@ def analyzer(filepath_prefix):
     # segmentation
     cyto, cyto_sum, nuc, nuc_sum = iu.mask_segmenter(nuc_mask, poi_filepath)
     iu.img_writer("Results/img/" + position_name + '_t' +
-                  str(frame_num) + "cyto", cyto)
+                  str(frame_num) + "_cyto", cyto)
     iu.img_writer("Results/img/" + position_name + '_t' +
-                  str(frame_num) + "nuc", nuc)
+                  str(frame_num) + "_nuc", nuc)
     try:
         fluo_ratio = round(float(nuc_sum) / float(cyto_sum), 3)
     except ZeroDivisionError:
