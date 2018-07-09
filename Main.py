@@ -28,8 +28,8 @@ exp_loc = input("Enter the full filepath to the experiment directory" +
 n_frames = int(input("Number of frames in a sequence: "))
 nuc_channel = input("Which channel has the NLS protein? 00/01/02: ")
 poi_channel = input("Which channel has the POI? 00/01/02: ")
-# nuc_channel = "ch01"
-# poi_channel = "ch00"
+# nuc_channel = "01"
+# poi_channel = "00"
 # n_frames = 71
 cpu_num = int(mp.cpu_count()) - 2  # Be nice, leave 2 cores free.
 
@@ -149,6 +149,7 @@ for idx, position_fn in enumerate(position_filenames):
             str('_t{:0' + str(len(str(n_frames-1))) + 'd}.csv').format(l))
         with open(result_filepath, "r") as result_f:
             contents = result_f.read()
+        os.remove(result_filepath)
         position_data = re.sub('\]', '', re.sub('\[', '', str(contents)))
         position_data = re.sub(' ', '', position_data)
         position_results.append(position_data)
