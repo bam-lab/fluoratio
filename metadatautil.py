@@ -23,9 +23,10 @@ from datetime import datetime
 
 # Get first absolute time for a position.
 def get_time(mdpath, frame):
-    exposure_num = frame * 3
     tree = ET.parse(mdpath)
     root = tree.getroot()
+    channel_num = len(list(root[0][2][3]))
+    exposure_num = frame * channel_num
     try:
         date = root[0][3][exposure_num].attrib['Date']
         time = root[0][3][exposure_num].attrib['Time']
