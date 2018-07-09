@@ -14,5 +14,5 @@
 rm -rf Results
 mkdir Results
 mkdir Results/img
-python3 -W ignore Main.py 2>&1 | tee Results/output.txt
+nice -1 python3 -W ignore Main.py 2>&1 | tee Results/output.txt
 exit
