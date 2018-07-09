@@ -65,8 +65,8 @@ def analyzer(filepath_prefix):
     scale = mu.get_scale(metadata_path)
     # mask generation
     try:
-        poi_mask = iu.mask_gen(poi_filepath, poi_bit_depth)[-1]
-        nuc_mask = iu.mask_gen(nuc_filepath, nuc_bit_depth)[-1]
+        poi_mask = iu.mask_gen(poi_filepath)[-1]
+        nuc_mask = iu.mask_gen(nuc_filepath)[-1]
         timestamp = mu.get_time(metadata_path, int(frame_num))
     except Exception as err:
         results_filename = "Results/" + position_name + \

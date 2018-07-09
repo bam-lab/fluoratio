@@ -17,14 +17,14 @@ import numpy as np
 from scipy import ndimage as ndi
 from skimage import exposure, filters, io, measure, morphology, segmentation
 from skimage.filters.rank import mean
+from skimage import img_as_float
 
 
 # TODO: pick blob closest to bottom right corner for analysis
-def mask_gen(img_filepath, bit_depth):
+def mask_gen(img_filepath):
     # Open image
     img = io.imread(img_filepath)
-    if (bit_depth > 14):
-        converted_img = bit_conversion(img, bit_depth, 14)
+    converted_img = img_as_float(img)
     # bilateral smoothing to preserve borders
     img_smooth = mean(converted_img, morphology.disk(10))
     # Equalize histogram of input image
