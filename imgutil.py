@@ -77,7 +77,6 @@ def bit_conversion(input_img, current_bit_depth, new_bit_depth):
     for idx, row in enumerate(input_img):
         for jdx, column in enumerate(input_img):
             converted[idx, jdx] = round(input_img[idx, jdx] * factor)
-    converted = []
     return converted
 
 
