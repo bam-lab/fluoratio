@@ -60,14 +60,14 @@ def analyzer(filepath_prefix):
     frame_num = filepath_prefix.split("_")[-1].split("t")[-1]
     # microns per pixel scale
     scale = mu.get_scale(metadata_path)
+    results_filename = "Results/" + position_name + \
+                       '_t' + str(frame_num) + '.csv'
     # mask generation
     try:
         poi_mask = iu.mask_gen(poi_filepath)[-1]
         nuc_mask = iu.mask_gen(nuc_filepath)[-1]
         timestamp = mu.get_time(metadata_path, int(frame_num))
     except Exception as err:
-        results_filename = "Results/" + position_name + \
-                           '_t' + str(frame_num) + '.csv'
         with open(results_filename, "w") as result_csv:
             result_csv.write("," + "," + "," + ",")
             print(str(dt.datetime.now()),
@@ -99,8 +99,6 @@ def analyzer(filepath_prefix):
     minutes = round(elapsed_time.total_seconds()/60.0, 3)
     # Writes to Results/PositionXXtYY.csv in the form:
     # minutes, fluorescence ratio, POI aspect ratio, POI area, nucleus area
-    results_filename = "Results/" + \
-        position_name + '_t' + str(frame_num) + '.csv'
     with open(results_filename, "w") as result_csv:
         result_csv.write(str(minutes) + "," + str(fluo_ratio) + "," +
                          str(poi_aspect_ratio) + "," + str(poi_area) +
@@ -109,12 +107,6 @@ def analyzer(filepath_prefix):
     analysis_time = round((analysis_end - analysis_start)/60, 3)
     print(str(dt.datetime.now()),
           "Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
-
-
-
-
-with open("first_time.txt", "w") as first_time_f:
-    first_time_f.write(str(first_time))
 
 
 pattern = "*.tif"
