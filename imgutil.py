@@ -11,8 +11,6 @@
 # limitations under the License.
 
 import matplotlib as mpl
-mpl.use("Agg")
-from matplotlib.figure import Figure
 from copy import deepcopy
 
 import numpy as np
@@ -22,11 +20,13 @@ from skimage.filters.rank import mean
 
 
 # TODO: pick blob closest to bottom right corner for analysis
-def mask_gen(img_filepath):
+def mask_gen(img_filepath, bit_depth):
     # Open image
     img = io.imread(img_filepath)
+    if (bit_depth > 14):
+        converted_img = bit_conversion(img, bit_depth, 14)
     # bilateral smoothing to preserve borders
-    img_smooth = mean(img, morphology.disk(10))
+    img_smooth = mean(converted_img, morphology.disk(10))
     # Equalize histogram of input image
     img_histeq = exposure.equalize_adapthist(img_smooth)
     # Highpass filter for image
@@ -69,6 +69,16 @@ def mask_gen(img_filepath):
 
 def img_writer(filename, img):
     io.imsave(filename + '.png', img)
+
+
+def bit_conversion(input_img, current_bit_depth, new_bit_depth):
+    factor = new_bit_depth/current_bit_depth
+    converted = deepcopy(input_img)
+    for idx, row in enumerate(input_img):
+        for jdx, column in enumerate(input_img):
+            converted[idx, jdx] = round(input_img[idx, jdx] * factor)
+    converted = []
+    return converted
 
 
 def mask_segmenter(mask, img_filepath):

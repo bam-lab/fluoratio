@@ -33,7 +33,7 @@ def get_time(mdpath, frame):
         timestamp_string = "{0} {1} ".format(
             date, time) + '{:03d} EST'.format(int(ms))
     except IndexError:
-        raise IndexError(frame, "is out of range")
+        raise IndexError(frame, "is out of time sequence range")
     try:
         timestamp = datetime.strptime(
             timestamp_string, "%Y-%m-%d %I:%M:%S %p %f %Z")

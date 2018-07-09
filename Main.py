@@ -26,12 +26,19 @@ exp_loc = input("Enter the full filepath to the experiment directory" +
                 " (Mark_and_Find_NNN): ")
 # exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_002"
 n_frames = int(input("Number of frames in a sequence: "))
-nuc_channel = input("Which channel has the NLS protein? ch00/ch01/ch02: ")
-poi_channel = input("Which channel has the POI? ch00/ch01/ch02: ")
+nuc_channel = input("Which channel has the NLS protein? 00/01/02: ")
+poi_channel = input("Which channel has the POI? 00/01/02: ")
 # nuc_channel = "ch01"
 # poi_channel = "ch00"
 # n_frames = 71
 cpu_num = int(mp.cpu_count()) - 2  # Be nice, leave 2 cores free.
+
+print(dt.datetime.now(), "Data location:\n ", exp_loc)
+positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
+positions.sort()
+n_pos = len(positions)
+first_md_path = glob.glob(positions[0] + "/MetaData/*_Properties.xml")
+first_time = mu.get_time(first_md_path[0], 0)
 
 
 def analyzer(filepath_prefix):
@@ -39,24 +46,27 @@ def analyzer(filepath_prefix):
     current_frame = filepath_prefix.split("/")[-1]
     print(str(dt.datetime.now()), "Analyzing {}".format(current_frame))
     # filepath construction
-    poi_filepath = filepath_prefix + '_' + poi_channel + '.tif'
-    nuc_filepath = filepath_prefix + '_' + nuc_channel + '.tif'
+    poi_filepath = filepath_prefix + '_ch' + poi_channel + '.tif'
+    nuc_filepath = filepath_prefix + '_ch' + nuc_channel + '.tif'
     # timestamp generation
     # Need to retrieve first time from first_time.txt
-    with open("first_time.txt", "r") as time_read_f:
-        first_time_string = time_read_f.read()
-    first_time = dt.datetime.strptime(first_time_string,
-                                      "%Y-%m-%d %H:%M:%S.%f")
+    # with open("first_time.txt", "r") as time_read_f:
+    #     first_time_string = time_read_f.read()
+    # first_time = dt.datetime.strptime(first_time_string,
+    #                                   "%Y-%m-%d %H:%M:%S.%f")
     position_name = filepath_prefix.split("/")[-2]
     metadata_path = re.sub("Position\d{3}_t.*", '', filepath_prefix) + \
         "MetaData/" + position_name + "_Properties.xml"
     frame_num = filepath_prefix.split("_")[-1].split("t")[-1]
+    # bit depth
+    poi_bit_depth = mu.get_bit_depth(metadata_path, int(poi_channel))
+    nuc_bit_depth = mu.get_bit_depth(metadata_path, int(nuc_channel))
     # microns per pixel scale
     scale = mu.get_scale(metadata_path)
     # mask generation
     try:
-        poi_mask = iu.mask_gen(poi_filepath)[-1]
-        nuc_mask = iu.mask_gen(nuc_filepath)[-1]
+        poi_mask = iu.mask_gen(poi_filepath, poi_bit_depth)[-1]
+        nuc_mask = iu.mask_gen(nuc_filepath, nuc_bit_depth)[-1]
         timestamp = mu.get_time(metadata_path, int(frame_num))
     except Exception as err:
         results_filename = "Results/" + position_name + \
@@ -97,12 +107,7 @@ def analyzer(filepath_prefix):
           "Wrote {0} in {1} minutes.".format(results_filename, analysis_time))
 
 
-print(dt.datetime.now(), "Data location:\n ", exp_loc)
-positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
-positions.sort()
-n_pos = len(positions)
-first_md_path = glob.glob(positions[0] + "/MetaData/*_Properties.xml")
-first_time = mu.get_time(first_md_path[0], 0)
+
 
 with open("first_time.txt", "w") as first_time_f:
     first_time_f.write(str(first_time))
