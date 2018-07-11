@@ -127,10 +127,10 @@ if __name__ == '__main__':
 # Coalesce all the result csv files into one
 print("hello there")
 with open("Results/results.csv", "w") as f:
-    f.write("Position")
+    f.write("Cell")
     for i in range(n_frames):
         f.write(",t" + str(i))  # time
-        f.write(",r" + str(i))  # fluorescence ratio
+        f.write(",f" + str(i))  # fluorescence ratio
         f.write(",ar" + str(i))  # aspect ratio
         f.write(",ca" + str(i))  # cell area
         f.write(",na" + str(i))  # nucleus area
