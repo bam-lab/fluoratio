@@ -105,3 +105,6 @@ fluoratio_env/
 results.csv
 outline.txt
 todo.txt
+Results
+Results/*
+custom*
