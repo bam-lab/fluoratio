@@ -31,7 +31,13 @@ poi_channel = input("Which channel has the POI? 00/01/02: ")
 # nuc_channel = "01"
 # poi_channel = "00"
 # n_frames = 71
-cpu_num = int(mp.cpu_count()) - 2  # Be nice, leave 2 cores free.
+
+cpu_count = mp.cpu_count()
+
+if cpu_count > 2:
+    cpu_num = int(cpu_count) - 2  # Be nice, leave 2 cores free.
+else:
+    cpu_num = 1
 
 print(dt.datetime.now(), "Data location:\n ", exp_loc)
 positions = glob.glob(exp_loc + '/Position*')  # list of full filepaths
