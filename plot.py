@@ -56,6 +56,13 @@ sns.set_style("white", {"axes.linewidth": 0.75,
                         'axes.edgecolor': '0'})  # 0 = black, 1 = white)
 mpl.rcParams['font.family'] = "TeX Gyre Heros"
 
+# lm = sns.lmplot(x="t",
+#                 y="f",
+#                 hue="Cell",
+#                 fit_reg=False,
+#                 legend_out=False,
+#                 data=fluo_ratio_long, scatter_kws={"zorder": 2, "s": 25})
+
 lm = sns.lmplot(x="ar",
                 y="f",
                 hue="Cell",
@@ -67,11 +74,12 @@ axes = lm.axes
 
 axes[0, 0].set_ylim(0, )
 
-drug = plt.axvspan(drug_in, drug_out, color='#5D6465', alpha=0.3, lw=0,
-                   zorder=1)
-plt.legend([drug], ["CytoD"], loc='upper right', bbox_to_anchor=(1.3, 1.0))
+# drug = plt.axvspan(drug_in, drug_out, color='#5D6465', alpha=0.3, lw=0,
+#                    zorder=1)
+# plt.legend([drug], ["CytoD"], loc='upper right', bbox_to_anchor=(1.3, 1.0))
 
-plt.xlabel("Time (min)", size=28)
+# plt.xlabel("Time (min)", size=28)
+plt.xlabel("Aspect Ratio", size=28)
 plt.ylabel("Nucleus to Cytoplasm\nFluorescence Ratio Change\n(no units)", size=28)
 plt.xticks(size=20)
 plt.yticks(size=20)
