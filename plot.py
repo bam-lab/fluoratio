@@ -56,7 +56,7 @@ sns.set_style("white", {"axes.linewidth": 0.75,
                         'axes.edgecolor': '0'})  # 0 = black, 1 = white)
 mpl.rcParams['font.family'] = "TeX Gyre Heros"
 
-lm = sns.lmplot(x="t",
+lm = sns.lmplot(x="ar",
                 y="f",
                 hue="Cell",
                 fit_reg=False,
