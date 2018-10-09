@@ -24,6 +24,10 @@ With that preamble out of the way, here are some steps to get Python 3 on macOS.
 
 This software will write out the nucleus to cytoplasm fluorescence ratios over time to a .csv file for each mark & find position. It will also generate individual plots for each position, with fluorescence ratio over time. A bulk plot of fluorescence ratio over time for all positions will also be generated, with a different colour for each position. You may want to tweak the colouring scheme for this, in case you have different experimental conditions for different positions.
 
+## How to contribute
+
+Create a virtual environment inside the fluoratio directory using the Python3 `virtualenv` command. Then, install all the dependencies using `pip` once you have started the virtualenv. Create a new git branch for any changes, and make a pull request once you have made your fix.
+
 ## Contact
 
 If you run into any issue with this software, please submit an Issue ticket in Github, or contact me on [Twitter](https://twitter.com/jidiculous/). Include as much detail as possible in your submission.
