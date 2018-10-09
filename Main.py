@@ -8,6 +8,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import datetime as dt
 import glob
 import os
@@ -16,18 +17,28 @@ from fnmatch import fnmatch
 import multiprocessing as mp
 import time
 
-import imgutil as iu
+import imgutil as imgu
 import metadatautil as mu
+import inpututil as inputu
 
 start = time.time()
 
 # File selector
-exp_loc = input("Enter the full filepath to the experiment directory" +
-                " (Mark_and_Find_NNN): ")
+exp_loc_prompt = str("Enter the full filepath to the experiment directory" +
+                     " containing Position directories with TIFFs: ")
+exp_loc = inputu.input_regex(exp_loc_prompt, "[^\0]+", "Invalid filepath")
 # exp_loc = "/home/jidicula/johanan/prog/test/Mark_and_Find_001"
-n_frames = int(input("Number of frames in a sequence: "))
-nuc_channel = input("Which channel has the NLS protein? 00/01/02: ")
-poi_channel = input("Which channel has the POI? 00/01/02: ")
+
+n_frames_prompt = "Number of frames in a sequence: "
+n_frames = int(inputu.input_regex(n_frames_prompt, "\d+", "Not an integer!"))
+
+nuc_channel_prompt = "Which channel has the NLS protein? 0/1/2/3: "
+nuc_channel = inputu.input_regex(nuc_channel_prompt, "[0-3]", "Not a channel!")
+nuc_channel = "{:02d}".format(int(nuc_channel))
+
+poi_channel_prompt = "Which channel has the POI? 0/1/2/3: "
+poi_channel = inputu.input_regex(poi_channel_prompt, "[0-3]", "Not a channel!")
+poi_channel = "{:02d}".format(int(poi_channel))
 # nuc_channel = "01"
 # poi_channel = "00"
 # n_frames = 71
@@ -70,8 +81,8 @@ def analyzer(filepath_prefix):
                        '_t' + str(frame_num) + '.csv'
     # mask generation
     try:
-        poi_mask = iu.mask_gen(poi_filepath)[-1]
-        nuc_mask = iu.mask_gen(nuc_filepath)[-1]
+        poi_mask = imgu.mask_gen(poi_filepath)[-1]
+        nuc_mask = imgu.mask_gen(nuc_filepath)[-1]
         timestamp = mu.get_time(metadata_path, int(frame_num))
     except Exception as err:
         with open(results_filename, "w") as result_csv:
@@ -82,11 +93,11 @@ def analyzer(filepath_prefix):
         return
     elapsed_time = timestamp - first_time
     # segmentation
-    cyto, cyto_sum, nuc, nuc_sum = iu.mask_segmenter(nuc_mask, poi_filepath)
-    iu.img_writer("Results/img/" + position_name + '_t' +
-                  str(frame_num) + "_cyto", cyto)
-    iu.img_writer("Results/img/" + position_name + '_t' +
-                  str(frame_num) + "_nuc", nuc)
+    cyto, cyto_sum, nuc, nuc_sum = imgu.mask_segmenter(nuc_mask, poi_filepath)
+    imgu.img_writer("Results/img/" + position_name + '_t' +
+                    str(frame_num) + "_cyto", cyto)
+    imgu.img_writer("Results/img/" + position_name + '_t' +
+                    str(frame_num) + "_nuc", nuc)
     try:
         fluo_ratio = round(float(nuc_sum) / float(cyto_sum), 3)
     except ZeroDivisionError:
@@ -98,10 +109,10 @@ def analyzer(filepath_prefix):
                   "Ratio = 0: wrote null values for {}".format(
                       filepath_prefix))
         return
-    poi_label = iu.img_labeler(poi_mask)
-    poi_area = iu.area_measure(poi_label) * scale
-    poi_aspect_ratio = round(iu.aspect_ratio(poi_label), 3)
-    nuc_area = iu.area_measure(iu.img_labeler(nuc_mask)) * scale
+    poi_label = imgu.img_labeler(poi_mask)
+    poi_area = imgu.area_measure(poi_label) * scale
+    poi_aspect_ratio = round(imgu.aspect_ratio(poi_label), 3)
+    nuc_area = imgu.area_measure(imgu.img_labeler(nuc_mask)) * scale
     minutes = round(elapsed_time.total_seconds()/60.0, 3)
     # Writes to Results/PositionXXtYY.csv in the form:
     # minutes, fluorescence ratio, POI aspect ratio, POI area, nucleus area
