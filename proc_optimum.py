@@ -23,7 +23,7 @@ def square(x):
 
 # You can edit trials and square_range to change testing parameters
 trials = 10
-square_range = 10000
+square_range = 1000000
 
 times = []*trials
 cpu_num = int(mp.cpu_count())
